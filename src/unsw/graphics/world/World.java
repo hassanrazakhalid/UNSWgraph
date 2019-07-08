@@ -49,11 +49,11 @@ public class World extends Application3D {
 	public void display(GL3 gl) {
 		super.display(gl);
 		 CoordFrame3D frame =  CoordFrame3D.identity()
-				 .translate(0f, -0.5f, -4.0f);
+				 .translate(-2.5f, -0.5f, -7.0f);
 //				 .scale(2f, 2f, 2f);
 //				 .rotateY(90);
 		 
-		 frame.draw(gl);
+//		 frame.draw(gl);
 		Shader.setViewMatrix(gl, frame.getMatrix());
 		terrain.draw(gl, CoordFrame3D.identity());
 	}

@@ -32,6 +32,8 @@ public class Terrain {
     private List<Road> roads;
     private Vector3 sunlight;
 
+    TriangleMesh fan;
+    
     /**
      * Create a new terrain
      *
@@ -45,6 +47,33 @@ public class Terrain {
         trees = new ArrayList<Tree>();
         roads = new ArrayList<Road>();
         this.sunlight = sunlight;
+        initTerrain();
+    }
+    
+    private void initTerrain() {
+    	
+    	List<Point3D> vertices = new ArrayList<>();
+    	
+    	for(int xOffset = 0; xOffset< width-1; xOffset++) {
+    		for(int zOffset = 0; zOffset< depth-1; zOffset++) {
+    		
+    		
+//    		float convertedX = (float)xOffset / width;
+//    		float convertedY = (float)yOffset / depth;
+    		
+    		vertices.add(convertToPoint3d(xOffset, zOffset));
+    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
+    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
+    		
+    		
+    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
+    		vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
+    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
+//    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
+    		
+    		}    	
+    	}
+    	fan = new TriangleMesh(vertices, false);
     }
 
     public List<Tree> trees() {
@@ -58,27 +87,6 @@ public class Terrain {
     public void draw(GL3 gl, CoordFrame3D frame) {
     	
     	Shader.setPenColor(gl, Color.black);
-    	List<Point3D> vertices = new ArrayList<>();
-    	
-    	for(int xOffset = 0; xOffset< width-1; xOffset++) {
-    		for(int zOffset = 0; zOffset< depth-1; zOffset++) {
-    		
-    		
-//    		float convertedX = (float)xOffset / width;
-//    		float convertedY = (float)yOffset / depth;
-    		
-    		vertices.add(convertToPoint3d(xOffset, zOffset));
-    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
-    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
-    		
-//    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
-//    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
-//    		vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
-    		
-    		
-    		}    	
-    	}
-    	TriangleMesh fan = new TriangleMesh(vertices, false);
     	fan.init(gl);
 		fan.draw(gl, frame);
     }
