@@ -2,11 +2,19 @@ package unsw.graphics.world;
 
 
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+
+import unsw.graphics.CoordFrame3D;
+import unsw.graphics.Shader;
 import unsw.graphics.Vector3;
 import unsw.graphics.geometry.Point2D;
+import unsw.graphics.geometry.Point3D;
+import unsw.graphics.geometry.TriangleFan3D;
+import unsw.graphics.geometry.TriangleMesh;
 
 
 
@@ -45,6 +53,39 @@ public class Terrain {
 
     public List<Road> roads() {
         return roads;
+    }
+    
+    public void draw(GL3 gl, CoordFrame3D frame) {
+    	
+    	Shader.setPenColor(gl, Color.black);
+    	List<Point3D> vertices = new ArrayList<>();
+    	
+    	for(int xOffset = 0; xOffset< width-1; xOffset++) {
+    		for(int zOffset = 0; zOffset< depth-1; zOffset++) {
+    		
+    		
+//    		float convertedX = (float)xOffset / width;
+//    		float convertedY = (float)yOffset / depth;
+    		
+    		vertices.add(convertToPoint3d(xOffset, zOffset));
+    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
+    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
+    		
+//    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
+//    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
+//    		vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
+    		
+    		
+    		}    	
+    	}
+    	TriangleMesh fan = new TriangleMesh(vertices, false);
+    	fan.init(gl);
+		fan.draw(gl, frame);
+    }
+    
+    private Point3D convertToPoint3d(int x, int z) {
+//    	return new Point3D((float)x / width, altitudes[x][z], (float)z / depth);
+    	return new Point3D((float)x, altitudes[x][z], (float)z);
     }
 
     public Vector3 getSunlight() {

@@ -74,8 +74,4 @@ public class Point2DBuffer {
         return floatBuffer;
     }
 
-    public int capacity() {
-        return capacity;
-    }
-
 }

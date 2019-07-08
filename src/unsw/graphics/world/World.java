@@ -6,8 +6,11 @@ import java.io.FileNotFoundException;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.Application3D;
+import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
 import unsw.graphics.Shader;
+import unsw.graphics.examples.sailing.objects.CameraHarness;
+import unsw.graphics.scene.Camera;
 
 
 
@@ -23,7 +26,11 @@ public class World extends Application3D {
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
-   
+        
+//        Camera camera = new Camera(new CameraHarness(scene.getRoot(), player));
+//        camera.scale(20);
+//        scene.setCamera(camera);
+        
     }
    
     /**
@@ -41,6 +48,14 @@ public class World extends Application3D {
 	@Override
 	public void display(GL3 gl) {
 		super.display(gl);
+		 CoordFrame3D frame =  CoordFrame3D.identity()
+				 .translate(0f, -0.5f, -4.0f);
+//				 .scale(2f, 2f, 2f);
+//				 .rotateY(90);
+		 
+		 frame.draw(gl);
+		Shader.setViewMatrix(gl, frame.getMatrix());
+		terrain.draw(gl, CoordFrame3D.identity());
 	}
 
 	@Override
