@@ -75,6 +75,12 @@ public class Terrain {
     	}
     	fan = new TriangleMesh(vertices, false);
     }
+    
+    private void drawTrees(GL3 gl, CoordFrame3D frame) {
+    	for (Tree tree : trees) {
+			tree.draw(gl, frame);
+		}
+    }
 
     public List<Tree> trees() {
         return trees;
@@ -89,6 +95,7 @@ public class Terrain {
     	Shader.setPenColor(gl, Color.black);
     	fan.init(gl);
 		fan.draw(gl, frame);
+		drawTrees(gl, frame);
     }
     
     private Point3D convertToPoint3d(int x, int z) {
