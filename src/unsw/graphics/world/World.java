@@ -1,17 +1,22 @@
 package unsw.graphics.world;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 
 import com.jogamp.opengl.GL;
+import javax.swing.RepaintManager;
+
+import com.jogamp.newt.event.KeyAdapter;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
 import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.util.GLDrawableUtil.ReshapeGLEventListener;
 
 import unsw.graphics.Application3D;
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
 import unsw.graphics.Shader;
-import unsw.graphics.examples.sailing.objects.CameraHarness;
-import unsw.graphics.scene.Camera;
+import unsw.graphics.geometry.Point3D;
+
 
 
 
@@ -20,10 +25,12 @@ import unsw.graphics.scene.Camera;
  *
  * @author malcolmr
  */
-public class World extends Application3D {
+public class World extends Application3D implements KeyListener{
 
     private Terrain terrain;
     private float rotation = 0;
+    private unsw.graphics.world.Camera camera;
+    private Point3D cameraPos;
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
@@ -32,9 +39,9 @@ public class World extends Application3D {
 //        Camera camera = new Camera(new CameraHarness(scene.getRoot(), player));
 //        camera.scale(20);
 //        scene.setCamera(camera);
-
-		
-        
+        this.camera = new unsw.graphics.world.Camera(terrain);
+    //    camera.scale(20);
+    //    scene.setCamera(camera);
     }
    
     /**
@@ -45,7 +52,6 @@ public class World extends Application3D {
      */
     public static void main(String[] args) throws FileNotFoundException {
         Terrain terrain = LevelIO.load(new File(args[0]));
-        
         World world = new World(terrain);
         world.start();
     }
@@ -53,19 +59,23 @@ public class World extends Application3D {
 	@Override
 	public void display(GL3 gl) {
 		super.display(gl);
-		 CoordFrame3D frame =  CoordFrame3D.identity()
-				 .translate(-2.5f, -0.5f, -7.0f);
+//		 CoordFrame3D frame =  CoordFrame3D.identity()
+//				 .translate(-2.5f, -0.5f, -7.0f);
 //				 .scale(2f, 2f, 2f);
 //				 .rotateY(90);
-		 
+		CoordFrame3D camFrame = camera.getCamFrame()
+										.translate(-1.5f, -0.5f, -7.0f)
+										.rotateY(10);
 //		 frame.draw(gl);
-		Shader.setViewMatrix(gl, frame.getMatrix());
+		Shader.setViewMatrix(gl, camFrame.getMatrix());
 		CoordFrame3D rotatedFrame = CoordFrame3D.identity().rotateY(rotation += 0.5);
     	if(rotation == 360) {
     		rotation = 0;
     	}
     	
 //    	terrain.draw(gl, rotatedFrame);
+		camFrame.draw(gl);	
+		Shader.setViewMatrix(gl, camFrame.getMatrix());
 		terrain.draw(gl, CoordFrame3D.identity());
 	}
 
@@ -76,9 +86,7 @@ public class World extends Application3D {
 
 	@Override
 	public void init(GL3 gl) {
-		super.init(gl);
-		
-		
+		super.init(gl);		
 		shader = new Shader(gl, "shaders/vertex_phong.glsl",
                 "shaders/fragment_phong_world.glsl");
         shader.use(gl);
@@ -92,6 +100,7 @@ public class World extends Application3D {
         gl.glEnable(GL.GL_CULL_FACE);
         
         terrain.init(gl);
+		getWindow().addKeyListener(this);
 	}
 
 	@Override
@@ -99,4 +108,31 @@ public class World extends Application3D {
         super.reshape(gl, width, height);
         Shader.setProjMatrix(gl, Matrix4.perspective(60, width/(float)height, 1, 100));
 	}
+
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int code = e.getKeyCode();
+		if(code == KeyEvent.VK_UP){
+			camera.up(terrain);
+		}
+		if(code == KeyEvent.VK_DOWN){
+			camera.down(terrain);
+		}
+		if(code == KeyEvent.VK_LEFT){
+			camera.left();
+		}
+		if(code == KeyEvent.VK_RIGHT){
+			camera.right();
+		}
+
+	}
 }
+
+	
+
