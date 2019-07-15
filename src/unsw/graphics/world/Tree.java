@@ -34,6 +34,10 @@ public class Tree {
         return position;
     }
     
+    public void initGL(GL3 gl3) {
+    	triangleMesh.init(gl3);
+    }
+    
     public void draw(GL3 gl, CoordFrame3D frame) {
     	
     	
@@ -41,7 +45,7 @@ public class Tree {
     			.translate(0, 1.25f, 0)
     			.scale(scaleFactor, scaleFactor, scaleFactor);
     	
-    	triangleMesh.init(gl);
+    	
     	triangleMesh.draw(gl, modelMatrix);
     	
     }

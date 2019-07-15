@@ -20,7 +20,7 @@ public abstract class Application3D extends Application {
     /**
      * The current shader.
      */
-    private Shader shader;
+    public Shader shader;
 
     /**
      * Construct a new 2D application.

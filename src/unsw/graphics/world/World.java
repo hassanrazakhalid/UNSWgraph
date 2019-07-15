@@ -3,6 +3,7 @@ package unsw.graphics.world;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.Application3D;
@@ -22,6 +23,7 @@ import unsw.graphics.scene.Camera;
 public class World extends Application3D {
 
     private Terrain terrain;
+    private float rotation = 0;
 
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
@@ -30,6 +32,8 @@ public class World extends Application3D {
 //        Camera camera = new Camera(new CameraHarness(scene.getRoot(), player));
 //        camera.scale(20);
 //        scene.setCamera(camera);
+
+		
         
     }
    
@@ -41,6 +45,7 @@ public class World extends Application3D {
      */
     public static void main(String[] args) throws FileNotFoundException {
         Terrain terrain = LevelIO.load(new File(args[0]));
+        
         World world = new World(terrain);
         world.start();
     }
@@ -55,13 +60,18 @@ public class World extends Application3D {
 		 
 //		 frame.draw(gl);
 		Shader.setViewMatrix(gl, frame.getMatrix());
+		CoordFrame3D rotatedFrame = CoordFrame3D.identity().rotateY(rotation += 0.5);
+    	if(rotation == 360) {
+    		rotation = 0;
+    	}
+    	
+//    	terrain.draw(gl, rotatedFrame);
 		terrain.draw(gl, CoordFrame3D.identity());
 	}
 
 	@Override
 	public void destroy(GL3 gl) {
 		super.destroy(gl);
-		
 	}
 
 	@Override
@@ -69,6 +79,19 @@ public class World extends Application3D {
 		super.init(gl);
 		
 		
+		shader = new Shader(gl, "shaders/vertex_phong.glsl",
+                "shaders/fragment_phong_world.glsl");
+        shader.use(gl);
+        
+        gl.glPointSize(10);
+        
+        // Turn on the depth buffer
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        
+        // Cull back faces
+        gl.glEnable(GL.GL_CULL_FACE);
+        
+        terrain.init(gl);
 	}
 
 	@Override

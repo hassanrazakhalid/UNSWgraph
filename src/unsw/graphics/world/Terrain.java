@@ -9,12 +9,14 @@ import java.util.List;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.CoordFrame3D;
+import unsw.graphics.Matrix4;
 import unsw.graphics.Shader;
 import unsw.graphics.Vector3;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleFan3D;
 import unsw.graphics.geometry.TriangleMesh;
+import unsw.graphics.scene.MathUtil;
 
 
 
@@ -33,6 +35,16 @@ public class Terrain {
     private Vector3 sunlight;
 
     TriangleMesh fan;
+    
+    private float ambientIntensity;
+//    private Point3D lightPos;
+    private float lightIntensity;
+    
+    // Properties of the material
+    private float ambientCoefficient;
+    private float diffuseCoefficient;
+    private float specularCoefficient;
+    private float phongExponent;
     
     /**
      * Create a new terrain
@@ -73,7 +85,7 @@ public class Terrain {
     		
     		}    	
     	}
-    	fan = new TriangleMesh(vertices, false);
+    	fan = new TriangleMesh(vertices, true);
     }
     
     private void drawTrees(GL3 gl, CoordFrame3D frame) {
@@ -90,18 +102,69 @@ public class Terrain {
         return roads;
     }
     
-    public void draw(GL3 gl, CoordFrame3D frame) {
-    	
-    	Shader.setPenColor(gl, Color.black);
+    public void init(GL3 gl) {
+    	Shader.setPenColor(gl, Color.red);
     	fan.init(gl);
+    	for (Tree tree : trees) {
+			tree.initGL(gl);
+		}
+    	Shader.setPoint3D(gl, "sunVec" ,getSunlight().asPoint3D());
+    	
+    	ambientIntensity = 0.1f;
+        lightIntensity = 1f;
+        
+        ambientCoefficient = 1;
+        diffuseCoefficient = 0.4f;
+        specularCoefficient = 0.2f;
+        phongExponent = 8;
+    	
+    	Shader.setPoint3D(gl, "lightIntensity" ,new Point3D(lightIntensity, lightIntensity, lightIntensity));
+    	Shader.setPoint3D(gl, "ambientIntensity" ,new Point3D(ambientIntensity, ambientIntensity, ambientIntensity));
+    	Shader.setPoint3D(gl, "ambientCoeff" ,new Point3D(ambientCoefficient, ambientCoefficient, ambientCoefficient));
+    	Shader.setPoint3D(gl, "diffuseCoeff" ,new Point3D(diffuseCoefficient, diffuseCoefficient, diffuseCoefficient));
+    	Shader.setPoint3D(gl, "specularCoeff" ,new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
+    	Shader.setFloat(gl, "phongExp", phongExponent);    	
+    }
+    
+    public void draw(GL3 gl, CoordFrame3D frame) {
+    	Shader.setPenColor(gl, Color.white);
 		fan.draw(gl, frame);
 		drawTrees(gl, frame);
     }
     
     private Point3D convertToPoint3d(int x, int z) {
-//    	return new Point3D((float)x / width, altitudes[x][z], (float)z / depth);
     	return new Point3D((float)x, altitudes[x][z], (float)z);
     }
+    
+//    private Color shading(CoordFrame3D frame, Point3D point, Vector3 normal) {
+//        // Compute the point and the normal in global coordinates
+//        Point3D p = frame.transform(point);
+//        Vector3 m = frame.transform(normal).normalize();
+//        
+//        // The vector from the point to the light source.
+//        Point3D lightPos =  this.sunlight.asPoint3D().translate(point.asHomogenous().trim());
+//        Vector3 s = lightPos.minus(p).normalize();
+//        
+//        // The ambient intensity (same for all points)
+//        float ambient = ambientIntensity * ambientCoefficient;
+//        
+//        // The diffuse intensity at this point
+//        float diffuse = lightIntensity * diffuseCoefficient * s.dotp(m);
+//        
+//        // The vector from the point to the camera
+//        // Note: we're assuming the view transform is the identity transform
+//        Vector3 v = p.asHomogenous().trim().scale(-1).normalize(); //v = normalize(-p)
+//       
+//        // The reflected vector
+//        Vector3 r = s.negate().plus(m.scale(2*s.dotp(m)));
+//        
+//        // The specular intensity at this point
+//        float specular = lightIntensity * specularCoefficient 
+//                * (float) Math.pow(r.dotp(v), phongExponent);
+//        
+//        float intensity = MathUtil.clamp(ambient + diffuse + specular, 0, 1);
+//        return new Color(intensity, intensity, intensity);
+//    }
 
     public Vector3 getSunlight() {
         return sunlight;
