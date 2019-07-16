@@ -73,10 +73,11 @@ public class World extends Application3D implements KeyListener{
     		rotation = 0;
     	}
     	
-//    	terrain.draw(gl, rotatedFrame);
+    	
 		camFrame.draw(gl);	
 		Shader.setViewMatrix(gl, camFrame.getMatrix());
-		terrain.draw(gl, CoordFrame3D.identity());
+		terrain.draw(gl, rotatedFrame);
+//		terrain.draw(gl, CoordFrame3D.identity());
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
 import unsw.graphics.Shader;
 import unsw.graphics.Vector3;
+import unsw.graphics.geometry.Line3D;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleFan3D;
@@ -46,6 +47,7 @@ public class Terrain {
     private float specularCoefficient;
     private float phongExponent;
     
+    private List<TriangleWorld> allTriangles = new ArrayList<>();
     /**
      * Create a new terrain
      *
@@ -68,19 +70,42 @@ public class Terrain {
     	
     	for(int xOffset = 0; xOffset< width-1; xOffset++) {
     		for(int zOffset = 0; zOffset< depth-1; zOffset++) {
+
+    			
+    			Point3D top_left = convertToPoint3d(xOffset, zOffset);
+    			Point3D bot_left = convertToPoint3d(xOffset, zOffset+1);
+    			Point3D top_right = convertToPoint3d(xOffset+1, zOffset);
+    			Point3D bot_right = convertToPoint3d(xOffset+1, zOffset+1);
+    			
+    			
+    			TriangleWorld tri = new TriangleWorld(
+    					new Line3D(top_left, bot_left),
+    					new Line3D(bot_left, top_right),
+    					new Line3D(top_right, top_left)
+    					);
+    			allTriangles.add(tri);
+    			
+    			vertices.add(top_left);
+    			vertices.add(bot_left);
+    			vertices.add(top_right);
+//    		vertices.add(convertToPoint3d(xOffset, zOffset));
+//    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
+//    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
+    			
+    			tri = new TriangleWorld(
+    					new Line3D(top_right, bot_left),
+    					new Line3D(bot_left, bot_right),
+    					new Line3D(bot_right, top_right)
+    					);
+    			allTriangles.add(tri);
     		
+    			vertices.add(top_right);
+    			vertices.add(bot_left);
+    			vertices.add(bot_right);
     		
-//    		float convertedX = (float)xOffset / width;
-//    		float convertedY = (float)yOffset / depth;
-    		
-    		vertices.add(convertToPoint3d(xOffset, zOffset));
-    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
-    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
-    		
-    		
-    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
-    		vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
-    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
+//    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
+//    		vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
+//    		vertices.add(convertToPoint3d(xOffset+1, zOffset));
 //    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
     		
     		}    	
@@ -136,36 +161,6 @@ public class Terrain {
     	return new Point3D((float)x, altitudes[x][z], (float)z);
     }
     
-//    private Color shading(CoordFrame3D frame, Point3D point, Vector3 normal) {
-//        // Compute the point and the normal in global coordinates
-//        Point3D p = frame.transform(point);
-//        Vector3 m = frame.transform(normal).normalize();
-//        
-//        // The vector from the point to the light source.
-//        Point3D lightPos =  this.sunlight.asPoint3D().translate(point.asHomogenous().trim());
-//        Vector3 s = lightPos.minus(p).normalize();
-//        
-//        // The ambient intensity (same for all points)
-//        float ambient = ambientIntensity * ambientCoefficient;
-//        
-//        // The diffuse intensity at this point
-//        float diffuse = lightIntensity * diffuseCoefficient * s.dotp(m);
-//        
-//        // The vector from the point to the camera
-//        // Note: we're assuming the view transform is the identity transform
-//        Vector3 v = p.asHomogenous().trim().scale(-1).normalize(); //v = normalize(-p)
-//       
-//        // The reflected vector
-//        Vector3 r = s.negate().plus(m.scale(2*s.dotp(m)));
-//        
-//        // The specular intensity at this point
-//        float specular = lightIntensity * specularCoefficient 
-//                * (float) Math.pow(r.dotp(v), phongExponent);
-//        
-//        float intensity = MathUtil.clamp(ambient + diffuse + specular, 0, 1);
-//        return new Color(intensity, intensity, intensity);
-//    }
-
     public Vector3 getSunlight() {
         return sunlight;
     }
@@ -214,13 +209,50 @@ public class Terrain {
      * @return
      */
     public float altitude(float x, float z) {
+    	
+    	//checking if point is integer, so just take the altitude
+    	if(x==Math.round(x) && z==Math.round(z)) {
+    		return altitudes[(int)x][(int) z];
+    	}
+    	
         float altitude = 0;
-
+        
+        int p1_z = (int) Math.floor(z);
+        int p2_z = (int) Math.ceil(z);
+        
+        int p1_x = (int) Math.floor(x);
+        int p2_x = (int) Math.ceil(x);
+        
+        Point3D pt1 = new Point3D(p1_x, 0, p1_z);
+        Point3D pt2 = new Point3D(p2_x, 0, p2_z);
+        
+        TriangleWorld result = null;
+        for (TriangleWorld triangleWorld : allTriangles) {
+        	 if(triangleWorld.isPointInTriangle(pt1)) {
+        		 result = triangleWorld;
+        		 break;
+        	 }
+        	 else if(triangleWorld.isPointInTriangle(pt2)) {
+        		 result = triangleWorld;
+        		 break;
+        	 }
+		}
+        if(result != null) {
+        	System.out.println("Found Triangle");
+        }
+//        altitude = altitudes[x][z];
         // TODO: Implement this
         
+        
+//        float p_z_1 = ((z - p1_z) / (p2_z - p1_z)) * p2_z;
+//        float p_z_2 = ((p2_z - z) / (p2_z - p1_z)) * p1_z;
+//        float p_z = p_z_1 + p_z_2;
+//        // go left and find interecting point and go right find intersecting point, find the interpolation
+//        
+//        altitude = p_z;
         return altitude;
     }
-
+    
     /**
      * Add a tree at the specified (x,z) point. 
      * The tree's y coordinate is calculated from the altitude of the terrain at that point.
