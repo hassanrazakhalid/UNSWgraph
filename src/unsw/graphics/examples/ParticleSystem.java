@@ -108,12 +108,12 @@ public class ParticleSystem extends Application3D implements KeyListener {
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, velocitiesName);
         gl.glBufferData(GL.GL_ARRAY_BUFFER, MAX_PARTICLES * 3 * Float.BYTES,
                 velocities.getBuffer(), GL.GL_DYNAMIC_DRAW);
-        gl.glVertexAttribPointer(Shader.VELOCITY, 3, GL.GL_FLOAT, false, 0, 0);
+//        gl.glVertexAttribPointer(Shader.VELOCITY, 3, GL.GL_FLOAT, false, 0, 0);
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, colorsName);
         gl.glBufferData(GL.GL_ARRAY_BUFFER, MAX_PARTICLES * 4 * Float.BYTES,
                 colors.getBuffer(), GL.GL_DYNAMIC_DRAW);
-        gl.glVertexAttribPointer(Shader.COLOR, 4, GL.GL_FLOAT, false, 0, 0);
+//        gl.glVertexAttribPointer(Shader.COLOR, 4, GL.GL_FLOAT, false, 0, 0);
 
         // Set the point size
         gl.glPointSize(100);
