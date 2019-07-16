@@ -103,7 +103,7 @@ public class LineRasterisation extends Application3D {
 
         Shader.setPenColor(gl, Color.WHITE);
         // Set current texture
-        Shader.setInt(gl, "tex", 0);
+//        Shader.setInt(gl, "tex", 0);
         gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
 
@@ -147,7 +147,7 @@ public class LineRasterisation extends Application3D {
         texCoords.add(new Point2D(1, 1));
         texCoords.add(new Point2D(0, 1));
 
-        square = new TriangleMesh(verts, indices, false, texCoords);
+//        square = new TriangleMesh(verts, indices, false, texCoords);
         square.init(gl);
     }
 

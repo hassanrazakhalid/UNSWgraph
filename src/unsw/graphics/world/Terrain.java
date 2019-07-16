@@ -211,35 +211,35 @@ public class Terrain {
     public float altitude(float x, float z) {
     	
     	//checking if point is integer, so just take the altitude
-    	if(x==Math.round(x) && z==Math.round(z)) {
-    		return altitudes[(int)x][(int) z];
-    	}
-    	
+//    	if(x==Math.round(x) && z==Math.round(z)) {
+//    		return altitudes[(int)x][(int) z];
+//    	}
+//    	
         float altitude = 0;
-        
-        int p1_z = (int) Math.floor(z);
-        int p2_z = (int) Math.ceil(z);
-        
-        int p1_x = (int) Math.floor(x);
-        int p2_x = (int) Math.ceil(x);
-        
-        Point3D pt1 = new Point3D(p1_x, 0, p1_z);
-        Point3D pt2 = new Point3D(p2_x, 0, p2_z);
-        
-        TriangleWorld result = null;
-        for (TriangleWorld triangleWorld : allTriangles) {
-        	 if(triangleWorld.isPointInTriangle(pt1)) {
-        		 result = triangleWorld;
-        		 break;
-        	 }
-        	 else if(triangleWorld.isPointInTriangle(pt2)) {
-        		 result = triangleWorld;
-        		 break;
-        	 }
-		}
-        if(result != null) {
-        	System.out.println("Found Triangle");
-        }
+//        
+//        int p1_z = (int) Math.floor(z);
+//        int p2_z = (int) Math.ceil(z);
+//        
+//        int p1_x = (int) Math.floor(x);
+//        int p2_x = (int) Math.ceil(x);
+//        
+//        Point3D pt1 = new Point3D(p1_x, 0, p1_z);
+//        Point3D pt2 = new Point3D(p2_x, 0, p2_z);
+//        
+//        TriangleWorld result = null;
+//        for (TriangleWorld triangleWorld : allTriangles) {
+//        	 if(triangleWorld.isPointInTriangle(pt1)) {
+//        		 result = triangleWorld;
+//        		 break;
+//        	 }
+//        	 else if(triangleWorld.isPointInTriangle(pt2)) {
+//        		 result = triangleWorld;
+//        		 break;
+//        	 }
+//		}
+//        if(result != null) {
+//        	System.out.println("Found Triangle");
+//        }
 //        altitude = altitudes[x][z];
         // TODO: Implement this
         

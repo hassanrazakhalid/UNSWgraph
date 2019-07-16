@@ -32,8 +32,8 @@ public class RayTracer extends Application2D {
         int[] viewport = new int[4];
         gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 
-        Shader.setInt(gl, "windowWidth", viewport[2]);
-        Shader.setInt(gl, "windowHeight", viewport[3]);
+//        Shader.setInt(gl, "windowWidth", viewport[2]);
+//        Shader.setInt(gl, "windowHeight", viewport[3]);
         getAnimator().setUpdateFPSFrames(1, null);
     }
 
@@ -41,7 +41,7 @@ public class RayTracer extends Application2D {
     public void display(GL3 gl) {
         super.display(gl);
 
-        Shader.setInt(gl, "time", time);
+//        Shader.setInt(gl, "time", time);
         Polygon2D quad = new Polygon2D(-1,-1, 1,-1, 1,1, -1,1);
         quad.draw(gl);
         time++;

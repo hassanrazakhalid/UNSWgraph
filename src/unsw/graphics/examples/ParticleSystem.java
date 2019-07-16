@@ -136,7 +136,7 @@ public class ParticleSystem extends Application3D implements KeyListener {
         super.display(gl);
         Shader.setPenColor(gl, Color.WHITE);
         
-        Shader.setInt(gl, "time", time);
+//        Shader.setInt(gl, "time", time);
 
 //        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, positionsName);
 //        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0,
@@ -147,7 +147,7 @@ public class ParticleSystem extends Application3D implements KeyListener {
 //                MAX_PARTICLES * 4 * Float.BYTES, colors.getBuffer());
 
         // Draw the particles
-        Shader.setInt(gl, "tex", 0);
+//        Shader.setInt(gl, "tex", 0);
         gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
 
