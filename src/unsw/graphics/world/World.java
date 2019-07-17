@@ -3,13 +3,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import com.jogamp.opengl.GL;
-import javax.swing.RepaintManager;
 
-import com.jogamp.newt.event.KeyAdapter;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.util.GLDrawableUtil.ReshapeGLEventListener;
+
 
 import unsw.graphics.Application3D;
 import unsw.graphics.CoordFrame3D;
@@ -71,21 +69,24 @@ public class World extends Application3D implements KeyListener{
 //				 .translate(-2.5f, -0.5f, -7.0f);
 //				 .scale(2f, 2f, 2f);
 //				 .rotateY(90);
-		CoordFrame3D camFrame = camera.getCamFrame()
-										.translate(-1.5f, -0.5f, -7.0f)
-										.rotateY(10);
-//		 frame.draw(gl);
-		Shader.setViewMatrix(gl, camFrame.getMatrix());
-		CoordFrame3D rotatedFrame = CoordFrame3D.identity().rotateY(rotation += 0.5);
+//		CoordFrame3D camFrame = camera.getCamFrame()
+//										.translate(-1.5f, -0.5f, -7.0f);
+		CoordFrame3D cameraFrame = CoordFrame3D.identity().translate(0, 0, camera.getLocalTranslation()).rotateY(camera.getLocalRotation())
+		.translate(-1.5f, -0.5f, -14.0f);
+										
+//		camFrame.draw(gl);
+//		Shader.setViewMatrix(gl, camFrame.getMatrix());
+//		CoordFrame3D rotatedFrame = CoordFrame3D.identity().rotateY(rotation += 0.5);
     	if(rotation == 360) {
     		rotation = 0;
     	}
     	
     	
-		camFrame.draw(gl);	
-		Shader.setViewMatrix(gl, camFrame.getMatrix());
+		cameraFrame.draw(gl);	
+		Shader.setViewMatrix(gl, cameraFrame.getMatrix());
 //		terrain.draw(gl, rotatedFrame);
 		terrain.draw(gl, CoordFrame3D.identity());
+
 	}
 
 	@Override
@@ -137,7 +138,7 @@ public class World extends Application3D implements KeyListener{
 		if(code == KeyEvent.VK_RIGHT){
 			camera.right();
 		}
-
+		
 	}
 }
 

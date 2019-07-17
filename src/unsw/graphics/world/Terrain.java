@@ -7,6 +7,7 @@ import java.util.List;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
+import com.sun.javafx.geom.Vec2d;
 
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
@@ -36,11 +37,18 @@ public class Terrain extends BaseWorld {
 	private List<Road> roads;
 	private Vector3 sunlight;
 
-	TriangleMesh fan;
-	
-	private float ambientIntensity;
-	// private Point3D lightPos;
-	private float lightIntensity;
+    TriangleMesh fan;
+    
+    private float ambientIntensity;
+//    private Point3D lightPos;
+    private float lightIntensity;
+    
+    // Properties of the material
+    private float ambientCoefficient;
+    private float diffuseCoefficient;
+    private float specularCoefficient;
+    private float phongExponent;
+    
 	
 	//Texture vars
 	Texture texture;
@@ -48,11 +56,6 @@ public class Terrain extends BaseWorld {
     private String textureExt = "bmp";
     Point3DBuffer quadTexCoords;
 
-	// Properties of the material
-	private float ambientCoefficient;
-	private float diffuseCoefficient;
-	private float specularCoefficient;
-	private float phongExponent;
 
 	private List<TriangleWorld> allTriangles = new ArrayList<>();
 
@@ -123,6 +126,7 @@ public class Terrain extends BaseWorld {
 
 	private void drawTrees(GL3 gl, CoordFrame3D frame) {
 		for (Tree tree : trees) {
+
 			tree.draw(gl, frame);
 		}
 	}
@@ -227,6 +231,10 @@ public class Terrain extends BaseWorld {
 		altitudes[x][z] = h;
 	}
 
+       
+        
+    
+
 	/**
 	 * Get the altitude at an arbitrary point. Non-integer points should be
 	 * interpolated from neighbouring grid points
@@ -236,6 +244,7 @@ public class Terrain extends BaseWorld {
 	 * @return
 	 */
 	public float altitude(float x, float z) {
+
 
 		// checking if point is integer, so just take the altitude
 		// if(x==Math.round(x) && z==Math.round(z)) {
@@ -277,6 +286,47 @@ public class Terrain extends BaseWorld {
 		// find the interpolation
 		//
 		// altitude = p_z;
+		
+		 int x1 = (int) Math.floor(x);
+	     int z1 = (int) Math.floor(z);
+	     int x2 = Math.round(x);
+	     int z2 = Math.round(z);
+	        
+	        
+	     Point2D p = new Point2D(x, z); 
+	     Point2D p1 = new Point2D(x1, z1);
+	     Point2D p2 = new Point2D(x2, z1);
+	     Point2D p3 = new Point2D(x1, z2);
+	     Point2D p4 = new Point2D(x2, z2);
+	        
+	     if(x > z) {
+	    	   	Point2D r1 = p1;
+	    	   	double a1 = getGridAltitude(x1, z1);
+	    	   	Point2D r2 = p2;
+	    	   	double a2 = getGridAltitude(x2, z1);
+	    	   	Point2D r3 = p4;
+	    	   	double a3 = getGridAltitude(x2, z2);
+	    	   	
+	     } else if (x < z) {
+	    	   	Point2D r1 = p1;
+	    	   	double a1 = getGridAltitude(x1, z1);
+	    	   	Point2D r2 = p3;
+	    	   	double a2 = getGridAltitude(x1, z2);
+	    	   	Point2D r3 = p4;
+	    	   	double a3 = getGridAltitude(x2, z2);
+		}
+	     
+	     else {
+			
+		}
+//	        new Point3D(.ge, y, z2)
+//	        float L1 = ((z2-z3)*(x-x3)+(x3-x2)*(z-z3))/(z2-z3)*(x1-x3)+(x3-x2)*(z1-z3);
+//	        float L2 = ((z3-z1)*(x-x3)+(x1-x3)*(z-z3))/(z2-z3)*(x1-x3)+(x3-x2)*(z1-z3);
+//	        float L3 = 1 - L1 - L2;
+////	        
+//	        altitude = (float) (L1*a1 + L2*a2 + L3*a3);
+//	        
+//	        return altitude;
 		return altitude;
 	}
 
