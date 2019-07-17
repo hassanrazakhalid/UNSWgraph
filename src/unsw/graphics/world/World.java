@@ -31,7 +31,8 @@ public class World extends Application3D implements KeyListener{
     private float rotation = 0;
     private unsw.graphics.world.Camera camera;
     private Point3D cameraPos;
-
+    private boolean afterInitFirstTime = false;
+    
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
@@ -52,6 +53,7 @@ public class World extends Application3D implements KeyListener{
      */
     public static void main(String[] args) throws FileNotFoundException {
         Terrain terrain = LevelIO.load(new File(args[0]));
+        terrain.initTerrain();
         World world = new World(terrain);
         world.start();
     }
@@ -59,6 +61,12 @@ public class World extends Application3D implements KeyListener{
 	@Override
 	public void display(GL3 gl) {
 		super.display(gl);
+		
+		if(!afterInitFirstTime) {
+			afterInitFirstTime = true;
+			terrain.initGL(gl);
+		}
+		
 //		 CoordFrame3D frame =  CoordFrame3D.identity()
 //				 .translate(-2.5f, -0.5f, -7.0f);
 //				 .scale(2f, 2f, 2f);
@@ -76,8 +84,8 @@ public class World extends Application3D implements KeyListener{
     	
 		camFrame.draw(gl);	
 		Shader.setViewMatrix(gl, camFrame.getMatrix());
-		terrain.draw(gl, rotatedFrame);
-//		terrain.draw(gl, CoordFrame3D.identity());
+//		terrain.draw(gl, rotatedFrame);
+		terrain.draw(gl, CoordFrame3D.identity());
 	}
 
 	@Override
@@ -88,7 +96,7 @@ public class World extends Application3D implements KeyListener{
 	@Override
 	public void init(GL3 gl) {
 		super.init(gl);		
-		shader = new Shader(gl, "shaders/vertex_phong.glsl",
+		shader = new Shader(gl, "shaders/vertex_phong_world.glsl",
                 "shaders/fragment_phong_world.glsl");
         shader.use(gl);
         
@@ -99,8 +107,6 @@ public class World extends Application3D implements KeyListener{
         
         // Cull back faces
         gl.glEnable(GL.GL_CULL_FACE);
-        
-        terrain.init(gl);
 		getWindow().addKeyListener(this);
 	}
 
