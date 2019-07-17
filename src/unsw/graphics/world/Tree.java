@@ -13,7 +13,7 @@ import unsw.graphics.geometry.TriangleMesh;
  *
  * @author malcolmr
  */
-public class Tree {
+public class Tree extends BaseWorld {
 
     private Point3D position;
     TriangleMesh triangleMesh;
@@ -34,9 +34,7 @@ public class Tree {
         return position;
     }
     
-    public void initGL(GL3 gl3) {
-    	triangleMesh.init(gl3);
-    }
+    
     
     public void draw(GL3 gl, CoordFrame3D frame) {
     	
@@ -49,5 +47,11 @@ public class Tree {
     	triangleMesh.draw(gl, modelMatrix);
     	
     }
+
+	@Override
+	public void initGL(GL3 gl) {
+		// TODO Auto-generated method stub
+		triangleMesh.init(gl);
+	}
 
 }
