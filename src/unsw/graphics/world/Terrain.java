@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jogamp.opengl.GL3;
+import com.sun.javafx.geom.Vec2d;
 
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
@@ -65,6 +66,8 @@ public class Terrain {
     private void initTerrain() {
     	
     	List<Point3D> vertices = new ArrayList<>();
+    	List<Integer> indicies;
+  
     	
     	for(int xOffset = 0; xOffset< width-1; xOffset++) {
     		for(int zOffset = 0; zOffset< depth-1; zOffset++) {
@@ -83,9 +86,13 @@ public class Terrain {
     		vertices.add(convertToPoint3d(xOffset+1, zOffset));
 //    		vertices.add(convertToPoint3d(xOffset, zOffset+1));
     		
+    		indicies.
+    		
     		}    	
     	}
     	fan = new TriangleMesh(vertices, true);
+    	
+   
     }
     
     private void drawTrees(GL3 gl, CoordFrame3D frame) {
@@ -215,10 +222,49 @@ public class Terrain {
      */
     public float altitude(float x, float z) {
         float altitude = 0;
-
-        // TODO: Implement this
+//
+//        int x1 = (int) Math.floor(x);
+//        int z1 = (int) Math.floor(z);
+//        int x2 = Math.round(x);
+//        int z2 = Math.round(z);
+//        
+//        Point2D p = new Point2D(x, z); 
+//        Point2D p1 = new Point2D(x1, z1);
+//        
+//        
+//        p = p0 + (p1 - p0) * s + (p2 - p0) * t
+//        
+//        Vec2d vec = new Vec2d(x2-x1, z2-z1);
+//        vec.distance(x, x);
+//        vec.
+//        
+//        if(x - x1 > 0.5) {
+//        		if(z - z1 > 0.5) {
+//        			int p1x = (int) Math.floor(x);
+//        			int p1z = (int) Math.floor(x);
+//        		}
+//        		
+//        }
+//        
+//        
+//        int x3 = 0;
+//        int z1 = (int) Math.floor(z);
+//        
+//        int z3 = 0;
+//        double a1 = getGridAltitude(x1, z1);
+//        double a2 = getGridAltitude(x2, z2);
+//        double a3 = 0;
+//        
+//        		
+//
+//        float L1 = ((z2-z3)*(x-x3)+(x3-x2)*(z-z3))/(z2-z3)*(x1-x3)+(x3-x2)*(z1-z3);
+//        float L2 = ((z3-z1)*(x-x3)+(x1-x3)*(z-z3))/(z2-z3)*(x1-x3)+(x3-x2)*(z1-z3);
+//        float L3 = 1 - L1 - L2;
+//        
+//        altitude = (float) (L1*a1 + L2*a2 + L3*a3);
         
         return altitude;
+        
     }
 
     /**
