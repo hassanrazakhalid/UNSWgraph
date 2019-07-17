@@ -10,6 +10,8 @@ import com.jogamp.opengl.GL3;
 
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
+import unsw.graphics.Point2DBuffer;
+import unsw.graphics.Point3DBuffer;
 import unsw.graphics.Shader;
 import unsw.graphics.Texture;
 import unsw.graphics.Vector3;
@@ -44,6 +46,7 @@ public class Terrain extends BaseWorld {
 	Texture texture;
     private String textureFileName = "res/textures/grass.bmp";
     private String textureExt = "bmp";
+    Point3DBuffer quadTexCoords;
 
 	// Properties of the material
 	private float ambientCoefficient;
@@ -74,6 +77,9 @@ public class Terrain extends BaseWorld {
 
 		List<Point3D> vertices = new ArrayList<>();
 		System.out.println(altitudes);
+		quadTexCoords = new Point3DBuffer(width * depth * 6);
+		
+		int textureIndex = 0 ;
 		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
 			for (int zOffset = 0; zOffset < depth - 1; zOffset++) {
 
@@ -86,6 +92,11 @@ public class Terrain extends BaseWorld {
 						new Line3D(top_right, top_left));
 				allTriangles.add(tri);
 
+		        quadTexCoords.put(textureIndex++, 0, 0, 0);
+		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+		        
+				
 				vertices.add(top_left);
 				vertices.add(bot_left);
 				vertices.add(top_right);
@@ -100,11 +111,10 @@ public class Terrain extends BaseWorld {
 				vertices.add(top_right);
 				vertices.add(bot_left);
 				vertices.add(bot_right);
-
-				// vertices.add(convertToPoint3d(xOffset, zOffset+1));
-				// vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
-				// vertices.add(convertToPoint3d(xOffset+1, zOffset));
-				// vertices.add(convertToPoint3d(xOffset, zOffset+1));
+				
+				quadTexCoords.put(textureIndex++, 0, 0, 0);
+		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
 
 			}
 		}
@@ -151,6 +161,15 @@ public class Terrain extends BaseWorld {
 		Shader.setPoint3D(gl, "specularCoeff",
 				new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
 		Shader.setFloat(gl, "phongExp", phongExponent);
+		
+		int[] names = new int[1];
+		// Copy across the buffer for the texture coordinates
+		gl.glGenBuffers(1, names, 0);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER,
+                quadTexCoords.capacity() * 2 * Float.BYTES,
+                quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
+        gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 	}	
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
@@ -160,17 +179,19 @@ public class Terrain extends BaseWorld {
         
 		fan.draw(gl, frame);
 		drawTrees(gl, frame);
+		
+		
 	}
 
 	private Point3D convertToPoint3d(int x, int z) {
-		System.out.println(x + " ," + altitudes[z][x] + " ," + z);
+//		System.out.println(x + " ," + altitudes[z][x] + " ," + z);
 		return new Point3D((float) x, altitudes[z][x], (float) z);
 	}
 
 	public Vector3 getSunlight() {
 		return sunlight;
 	}
-
+	
 	/**
 	 * Set the sunlight direction.
 	 * 
