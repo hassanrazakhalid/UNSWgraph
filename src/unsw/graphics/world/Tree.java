@@ -42,7 +42,7 @@ public class Tree extends BaseWorld {
     	CoordFrame3D modelMatrix = frame.translate(position)
     			.translate(0, 1.25f, 0)
     			.scale(scaleFactor, scaleFactor, scaleFactor);
-    	
+   
     	
     	triangleMesh.draw(gl, modelMatrix);
     	

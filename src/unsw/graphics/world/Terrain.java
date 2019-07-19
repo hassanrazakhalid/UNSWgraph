@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.experimental.theories.FromDataPoints;
+
+import com.jogamp.common.util.Ringbuffer;
+import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
@@ -74,7 +78,45 @@ public class Terrain extends BaseWorld {
 	}
 
 	public void initTerrain() {
-
+//		ArrayList<Point2D> vertices = new ArrayList<>();
+//		ArrayList<Integer> indices = new ArrayList<Integer>();
+//		for(int z = 0; z < depth -1; z++) {
+//			for(int x = 0; x < width -1; x++) {
+//				Point2D p = new Point2D(x, z);
+//				vertices.add(p);
+//				System.out.println("x = " + p.getX() + "z = " + p.getY());
+//			}
+//		}
+//		
+//		System.out.println("vertices list: " + vertices);
+//		
+//		for(int z = 0; z < depth -2; z++) {
+//			for(int x = 0; x < width -2; x++) {
+//				Point2D p0 = new Point2D(x, z);
+//				Point2D p1 = new Point2D(x, z+1);
+//				Point2D p2 = new Point2D(x+1, z+1);
+//				
+//				indices.add(vertices.indexOf(p0));
+//				indices.add(vertices.indexOf(p1));
+//				indices.add(vertices.indexOf(p2));
+//				
+//				System.out.println("p0,x = " + p0.getX() + "p0,z = " + p0.getY());
+//				
+//				p0 = new Point2D(x, z);
+//				p1 = new Point2D(x+1, z);
+//				p2 = new Point2D(x+1, z+1);
+//				indices.add(vertices.indexOf(p0));
+//				indices.add(vertices.indexOf(p1));
+//				indices.add(vertices.indexOf(p2));
+//				
+//				
+//				
+//				
+//			}
+//		}
+//	
+//		System.out.println(indices);
+			
 		List<Point3D> vertices = new ArrayList<>();
 		System.out.println(altitudes);
 		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
@@ -91,27 +133,27 @@ public class Terrain extends BaseWorld {
 
 				vertices.add(top_left);
 				vertices.add(bot_left);
-				vertices.add(top_right);
-				// vertices.add(convertToPoint3d(xOffset, zOffset));
-				// vertices.add(convertToPoint3d(xOffset, zOffset+1));
-				// vertices.add(convertToPoint3d(xOffset+1, zOffset));
+				vertices.add(bot_right);
+				 vertices.add(convertToPoint3d(xOffset, zOffset));
+				 vertices.add(convertToPoint3d(xOffset, zOffset+1));
+				 vertices.add(convertToPoint3d(xOffset+1, zOffset));
 
 				tri = new TriangleWorld(new Line3D(top_right, bot_left), new Line3D(bot_left, bot_right),
 						new Line3D(bot_right, top_right));
 				allTriangles.add(tri);
 
-				vertices.add(top_right);
-				vertices.add(bot_left);
+				vertices.add(top_left);
 				vertices.add(bot_right);
+				vertices.add(top_right);
 
-				// vertices.add(convertToPoint3d(xOffset, zOffset+1));
-				// vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
-				// vertices.add(convertToPoint3d(xOffset+1, zOffset));
-				// vertices.add(convertToPoint3d(xOffset, zOffset+1));
+				 vertices.add(convertToPoint3d(xOffset, zOffset+1));
+				 vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
+				 vertices.add(convertToPoint3d(xOffset+1, zOffset));
+				 vertices.add(convertToPoint3d(xOffset, zOffset+1));
 
 			}
 		}
-		fan = new TriangleMesh(vertices, true);
+		fan = new TriangleMesh(vertices,true);
 	}
 
 	private void drawTrees(GL3 gl, CoordFrame3D frame) {
@@ -225,10 +267,10 @@ public class Terrain extends BaseWorld {
 	public float altitude(float x, float z) {
 
 
-		// checking if point is integer, so just take the altitude
-		// if(x==Math.round(x) && z==Math.round(z)) {
-		// return altitudes[(int)x][(int) z];
-		// }
+//		 checking if point is integer, so just take the altitude
+		 if(x==Math.round(x) && z==Math.round(z)) {
+		 return altitudes[(int)x][(int) z];
+		 }
 		//
 		float altitude = 0;
 		//
@@ -268,45 +310,51 @@ public class Terrain extends BaseWorld {
 		
 		 int x1 = (int) Math.floor(x);
 	     int z1 = (int) Math.floor(z);
-	     int x2 = Math.round(x);
-	     int z2 = Math.round(z);
-	        
-	        
-	     Point2D p = new Point2D(x, z); 
-	     Point2D p1 = new Point2D(x1, z1);
-	     Point2D p2 = new Point2D(x2, z1);
-	     Point2D p3 = new Point2D(x1, z2);
-	     Point2D p4 = new Point2D(x2, z2);
+	     int x2 = (int) Math.ceil(x);
+	     int z2 = (int) Math.ceil(z);
+
+	     
+	     Point3D p1 = convertToPoint3d(x1, z1);
+	     Point3D p2 = convertToPoint3d(x2, z1);
+	     Point3D p3 = convertToPoint3d(x1, z2);
+	     Point3D p4 = convertToPoint3d(x2, z2);
 	        
 	     if(x > z) {
-	    	   	Point2D r1 = p1;
-	    	   	double a1 = getGridAltitude(x1, z1);
-	    	   	Point2D r2 = p2;
-	    	   	double a2 = getGridAltitude(x2, z1);
-	    	   	Point2D r3 = p4;
-	    	   	double a3 = getGridAltitude(x2, z2);
+	    	   	Point3D r1 = p1;
+	    	   	Point3D r2 = p2;
+	    	   	Point3D r3 = p4;
+	    	   	
+	    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+	    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+	    	   	float L3 = 1 - L1 - L2;
+	    	   	
+	    	   	altitude = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
 	    	   	
 	     } else if (x < z) {
-	    	   	Point2D r1 = p1;
-	    	   	double a1 = getGridAltitude(x1, z1);
-	    	   	Point2D r2 = p3;
-	    	   	double a2 = getGridAltitude(x1, z2);
-	    	   	Point2D r3 = p4;
-	    	   	double a3 = getGridAltitude(x2, z2);
-		}
+	    	   	Point3D r1 = p1;
+	    	   	Point3D r2 = p3;
+	    	   	Point3D r3 = p4;
+	    	   	
+	    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+	    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+	    	   	float L3 = 1 - L1 - L2;
+	    	   	
+	    	   	altitude = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
+	     }
+	     
 	     
 	     else {
-			
+	    	   	Point3D r1 = p1;
+	    	   	Point3D r2 = p4;
+	    	   	Point3D r3 = null;
+	    	   	
+	    	   	double t = r1.getX()-x;
+	    	   	
+	    	   	altitude = (float) (t*r1.getY() + (t-1)*r2.getY());
+	    	   	
 		}
-//	        new Point3D(.ge, y, z2)
-//	        float L1 = ((z2-z3)*(x-x3)+(x3-x2)*(z-z3))/(z2-z3)*(x1-x3)+(x3-x2)*(z1-z3);
-//	        float L2 = ((z3-z1)*(x-x3)+(x1-x3)*(z-z3))/(z2-z3)*(x1-x3)+(x3-x2)*(z1-z3);
-//	        float L3 = 1 - L1 - L2;
-////	        
-//	        altitude = (float) (L1*a1 + L2*a2 + L3*a3);
-//	        
-//	        return altitude;
-		return altitude;
+	     
+		return -altitude;
 	}
 
 	/**
@@ -332,4 +380,5 @@ public class Terrain extends BaseWorld {
 		Road road = new Road(width, spine);
 		roads.add(road);
 	}
+	
 }

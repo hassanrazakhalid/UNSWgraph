@@ -3,6 +3,7 @@ package unsw.graphics.world;
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
 import unsw.graphics.geometry.Point3D;
+import unsw.graphics.scene.MathUtil;
 
 
 public class Camera {
@@ -10,17 +11,19 @@ public class Camera {
 	private CoordFrame3D camFrame;
 	private Terrain terrain;
 	private Point3D globalPosition;
-	private float localRotation;
-	private float localTranslation;
+	private float globalRotation;
+//	private float localRotation;
+//	private float localTranslation;
 	
 
 	public Camera(Terrain terrain) {
 		globalPosition = new Point3D(0, 0, 0);
-		localRotation = 0;
-		localTranslation = 0;
+		globalRotation = 0;
+		this.terrain = terrain;
+//		camFrame =  new CoordFrame3D(Matrix4.identity());
 	}
 	
-	public Point3D getCamGlobalPosition() {
+	public Point3D getGlobalPosition() {
 		return globalPosition;
 	}
 	
@@ -29,52 +32,22 @@ public class Camera {
 		camFrame.translate(globalPosition);
 	}
 	
-	public float getLocalRotation() {
-		return localRotation;
-	}
-	
-	public float getLocalTranslation() {
-		return localTranslation;
-	}
 	
 	public void up(Terrain terrain) {
-		localTranslation += 0.2f;
-//		setCamFrame(CoordFrame3D.identity().rotateY(localRotation).translate(0, 0, localZ));
-//		setCamFrame(camFrame.translate(0, 0, 0.2f));
-//		float x = camFrame.getMatrix().getValues()[12];
-//		float z = camFrame.getMatrix().getValues()[14];
-//		setCamFrame(camFrame.translate(0, terrain.altitude(x, z), 0));
-		
-//		float x = getCamFrame().getMatrix().getValues()[12];
-//		float z = getCamFrame().getMatrix().getValues()[14];
-//		float altitude = terrain.altitude(x, z);
-//		setCamFrame(getCamFrame().translate(0, altitude, 0));
-
+		globalPosition = this.globalPosition.translate(-(float)Math.sin(Math.toRadians(globalRotation)), 0f, -(float)Math.cos(Math.toRadians(globalRotation)));
+		System.out.println("Global position x,y = " + globalPosition.getX() + globalPosition.getZ());
 	}
 	public void down(Terrain terrain) {
-		localTranslation -= 0.2f;
-//		setCamFrame(CoordFrame3D.identity().rotateY(localRotation).translate(0, 0, localZ));
-//		setCamFrame(camFrame.translate(0, 0, -0.2f));
-//		float x = camFrame.getMatrix().getValues()[12];
-//		float z = camFrame.getMatrix().getValues()[14];
-//		setCamFrame(camFrame.translate(0, terrain.altitude(x, z), 0));
-		
-//		setCamFrame(getCamFrame().translate(0, 0, -0.2f));
-//		float x = getCamFrame().getMatrix().getValues()[12];
-//		float z = getCamFrame().getMatrix().getValues()[14];
-//		float altitude = terrain.altitude(x, z);
-//		setCamFrame(getCamFrame().translate(0, altitude, 0));
+		globalPosition = this.globalPosition.translate((float)Math.sin(Math.toRadians(globalRotation)), 0f, (float)Math.cos(Math.toRadians(globalRotation)));
 
 	}
 
 	public void left() {
-		localRotation -= 10;
-//		setCamFrame(camFrame.rotateY(-20));
+		globalRotation += 10;
 	}
 
 	public void right() {
-		localRotation += 10;
-//		setCamFrame(camFrame.rotateY(20));
+		globalRotation -= 10;
 	}
 	
 	public CoordFrame3D getCamFrame() {
@@ -85,7 +58,14 @@ public class Camera {
 		camFrame = frame;
 	}
 
-	
-	
+	public float getGlobalRotation() {
+		return globalRotation;
+	}
+
+	public void setGlobalRotation(float globalRotation) {
+		this.globalRotation = globalRotation;
+	}
+
+
 	
 }
