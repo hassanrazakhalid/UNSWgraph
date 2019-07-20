@@ -16,9 +16,6 @@ import unsw.graphics.Matrix4;
 import unsw.graphics.Shader;
 import unsw.graphics.geometry.Point3D;
 
-
-
-
 /**
  * COMMENT: Comment Game 
  *

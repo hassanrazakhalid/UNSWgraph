@@ -20,10 +20,11 @@ uniform mat4 proj_matrix;
 out vec4 viewPosition;
 out vec3 m;
 out vec2 texCoordFrag;
+out vec4 globalPosition;
 
 void main() {
 	// The global position is in homogenous coordinates
-    vec4 globalPosition = model_matrix * vec4(position, 1);
+    globalPosition = model_matrix * vec4(position, 1);
 
     // The position in camera coordinates
     viewPosition = view_matrix * globalPosition;

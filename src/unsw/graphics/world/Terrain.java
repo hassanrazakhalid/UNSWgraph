@@ -10,6 +10,10 @@ import com.jogamp.opengl.GL3;
 
 import unsw.graphics.CoordFrame3D;
 
+import unsw.graphics.Matrix4;
+import unsw.graphics.Point2DBuffer;
+import unsw.graphics.Point3DBuffer;
+
 import unsw.graphics.Shader;
 import unsw.graphics.Texture;
 import unsw.graphics.Vector3;
@@ -47,6 +51,13 @@ public class Terrain extends BaseWorld {
 	Texture texture;
     private String textureFileName = "res/textures/grass.bmp";
     private String textureExt = "bmp";
+
+//    Point3DBuffer quadTexCoords;
+    Point2DBuffer quadTexCoords;
+    
+
+	private List<TriangleWorld> allTriangles = new ArrayList<>();
+
 
 	/**
 	 * Create a new terrain
@@ -90,12 +101,37 @@ public class Terrain extends BaseWorld {
 				indices.add(vertices.indexOf(p0));
 				indices.add(vertices.indexOf(p1));
 				indices.add(vertices.indexOf(p2));
+			}
+		}
 
+//		quadTexCoords = new Point3DBuffer(width * depth * 6);
+		quadTexCoords = new Point2DBuffer(width * depth * 6);
+		
+		int textureIndex = 0 ;
+		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
+			for (int zOffset = 0; zOffset < depth - 1; zOffset++) {
+
+//		        quadTexCoords.put(textureIndex++, 0, 0, 0);
+//		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+//		        quadTexCoords.put(textureIndex++, 1f, 1f, 1);
+				
+				quadTexCoords.put(textureIndex++, 0, 0);
+		        quadTexCoords.put(textureIndex++, 1f, 0f);
+		        quadTexCoords.put(textureIndex++, 1f, 1f);
+
+				
+//				quadTexCoords.put(textureIndex++, 0, 1, 0);
+//		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+//		        quadTexCoords.put(textureIndex++, 1f, 1f, 1);
+				quadTexCoords.put(textureIndex++, 0, 0);
+		        quadTexCoords.put(textureIndex++, 1f, 0f);
+		        quadTexCoords.put(textureIndex++, 1f, 1f);
 			}
 		}
 	
 		System.out.println(indices);
 		fan = new TriangleMesh(vertices, indices, true);
+
 	}
 
 	private void drawTrees(GL3 gl, CoordFrame3D frame) {
@@ -115,7 +151,6 @@ public class Terrain extends BaseWorld {
 	@Override
 	public void initGL(GL3 gl) {
 		// TODO Auto-generated method stub
-		Shader.setPenColor(gl, Color.red);
 		texture = new Texture(gl, textureFileName, textureExt, false);
 		fan.init(gl);
 		for (Tree tree : trees) {
@@ -127,9 +162,9 @@ public class Terrain extends BaseWorld {
 		lightIntensity = 1f;
 
 		ambientCoefficient = 1;
-		diffuseCoefficient = 0.4f;
-		specularCoefficient = 0.2f;
-		phongExponent = 8;
+		diffuseCoefficient = 0.1f;
+		specularCoefficient = 0.8f;
+		phongExponent = 1;
 
 		Shader.setPoint3D(gl, "lightIntensity", new Point3D(lightIntensity, lightIntensity, lightIntensity));
 		Shader.setPoint3D(gl, "ambientIntensity", new Point3D(ambientIntensity, ambientIntensity, ambientIntensity));
@@ -138,15 +173,27 @@ public class Terrain extends BaseWorld {
 		Shader.setPoint3D(gl, "specularCoeff",
 				new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
 		Shader.setFloat(gl, "phongExp", phongExponent);
+		
+		
+		int[] names = new int[1];
+		// Copy across the buffer for the texture coordinates
+		gl.glGenBuffers(1, names, 0);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER,
+                quadTexCoords.capacity * 2 * Float.BYTES,
+                quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
+        gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 	}	
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
-		Shader.setPenColor(gl, Color.white);
+		Shader.setPenColor(gl, Color.black);
 		gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
         
 		fan.draw(gl, frame);
 		drawTrees(gl, frame);
+		
+		
 	}
 
 	private Point3D convertToPoint3d(int x, int z) {
@@ -163,7 +210,7 @@ public class Terrain extends BaseWorld {
 	public Vector3 getSunlight() {
 		return sunlight;
 	}
-
+	
 	/**
 	 * Set the sunlight direction.
 	 * 
@@ -228,7 +275,7 @@ public class Terrain extends BaseWorld {
 				     
 				    int x1 = (int) Math.ceil(x);
 				    int z1 = (int) Math.ceil(z);
-		
+
 				    Point3D p1 = convertToPoint3d(x0, z0);
 				    Point3D p2 = convertToPoint3d(x1, z0);
 				    Point3D p3 = convertToPoint3d(x0, z1);
@@ -291,5 +338,4 @@ public class Terrain extends BaseWorld {
 		Road road = new Road(width, spine);
 		roads.add(road);
 	}
-	
 }
