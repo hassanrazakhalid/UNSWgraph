@@ -1,4 +1,5 @@
 package unsw.graphics.world;
+import java.awt.Frame;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -28,8 +29,8 @@ public class World extends Application3D implements KeyListener{
     private Terrain terrain;
     private float rotation = 0;
     private unsw.graphics.world.Camera camera;
-    private Point3D cameraPos;
     private boolean afterInitFirstTime = false;
+    CoordFrame3D cameraFrame = new CoordFrame3D(Matrix4.identity());
     
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
@@ -71,9 +72,25 @@ public class World extends Application3D implements KeyListener{
 //				 .rotateY(90);
 //		CoordFrame3D camFrame = camera.getCamFrame()
 //										.translate(-1.5f, -0.5f, -7.0f);
-		CoordFrame3D cameraFrame = CoordFrame3D.identity().translate(0, 0, camera.getLocalTranslation()).rotateY(camera.getLocalRotation())
-		.translate(-1.5f, -0.5f, -14.0f);
-										
+		
+		//this rotates correctly but moves in world frame
+//		cameraFrame = CoordFrame3D.identity().rotateY(camera.getGlobalRotation()).translate(0, 0, camera.getLocalTranslation())
+//				.translate(-1.5f, -0.5f, -14.0f);
+		cameraFrame = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D());
+//				.translate(-1.5f, -0.5f, -14.0f);
+		
+//		int x = (int) cameraFrame.getMatrix().getValues()[12];
+//		int z = (int) cameraFrame.getMatrix().getValues()[14];
+//		cameraPos = new Point3D(x, 0, z);
+		//Matrix4 cameraMatrix = CoordFrame3D.identity().rotateY(camera.getLocalRotation()).getMatrix().multiply(CoordFrame3D.identity().translate(0, 0, camera.getLocalTranslation()).getMatrix());
+		
+		//this moves correctly but rotates in world frame
+//		cameraFrame =  new CoordFrame3D(Matrix4.identity()).translate(0, 0, camera.getLocalTranslation()).rotateY(camera.getLocalRotation())
+//		.translate(-1.5f, -0.5f, -14.0f);
+		CoordFrame3D frame = camera.getCamFrame();
+		
+//		cameraFrame = new CoordFrame3D(Matrix4.identity()).rotateY(camera.getLocalRotation()).translate(cameraPos);
+					
 //		camFrame.draw(gl);
 //		Shader.setViewMatrix(gl, camFrame.getMatrix());
 //		CoordFrame3D rotatedFrame = CoordFrame3D.identity().rotateY(rotation += 0.5);
@@ -84,7 +101,6 @@ public class World extends Application3D implements KeyListener{
     	
 		cameraFrame.draw(gl);	
 		Shader.setViewMatrix(gl, cameraFrame.getMatrix());
-//		terrain.draw(gl, rotatedFrame);
 		terrain.draw(gl, CoordFrame3D.identity());
 
 	}
