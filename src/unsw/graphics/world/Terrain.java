@@ -149,7 +149,6 @@ public class Terrain extends BaseWorld {
 	@Override
 	public void initGL(GL3 gl) {
 		// TODO Auto-generated method stub
-		Shader.setPenColor(gl, Color.red);
 		texture = new Texture(gl, textureFileName, textureExt, false);
 		fan.init(gl);
 		for (Tree tree : trees) {
@@ -185,7 +184,7 @@ public class Terrain extends BaseWorld {
 	}	
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
-		Shader.setPenColor(gl, Color.white);
+		Shader.setPenColor(gl, Color.black);
 		gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
         
