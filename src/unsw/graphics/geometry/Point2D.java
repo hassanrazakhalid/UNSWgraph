@@ -93,5 +93,15 @@ public class Point2D {
     public Vector3 asHomogenous() {
         return new Vector3(new float[] {x, y, 1});
     }
+    
+    @Override
+    public boolean equals(Object t){
+        if(!(t instanceof Point2D)){
+            return false; 
+        }
+        Point2D p = (Point2D)t;
+        //Compare however you want, ie
+        return (p.getX() == this.getX() && p.getY() == this.getY());
+    }
 
 }

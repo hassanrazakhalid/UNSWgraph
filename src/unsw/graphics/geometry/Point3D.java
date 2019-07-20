@@ -119,5 +119,15 @@ public class Point3D {
     public Vector3 minus(Point3D p) {
         return asHomogenous().minus(p.asHomogenous()).trim();
     }
+    
+    @Override
+    public boolean equals(Object t){
+        if(!(t instanceof Point3D)){
+            return false; 
+        }
+        Point3D p = (Point3D)t;
+        //Compare however you want, ie
+        return (p.getX() == this.getX() && p.getY() == this.getY() && p.getZ() == this.getZ());
+    }
 
 }

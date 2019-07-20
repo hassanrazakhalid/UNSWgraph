@@ -4,27 +4,18 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.experimental.theories.FromDataPoints;
-
-import com.jogamp.common.util.Ringbuffer;
-import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
-import com.sun.javafx.geom.Vec2d;
 
 import unsw.graphics.CoordFrame3D;
-import unsw.graphics.Matrix4;
+
 import unsw.graphics.Shader;
 import unsw.graphics.Texture;
 import unsw.graphics.Vector3;
-import unsw.graphics.geometry.Line3D;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
-import unsw.graphics.geometry.TriangleFan3D;
 import unsw.graphics.geometry.TriangleMesh;
-import unsw.graphics.scene.MathUtil;
-
 /**
  * COMMENT: Comment HeightMap
  *
@@ -57,9 +48,6 @@ public class Terrain extends BaseWorld {
     private String textureFileName = "res/textures/grass.bmp";
     private String textureExt = "bmp";
 
-
-	private List<TriangleWorld> allTriangles = new ArrayList<>();
-
 	/**
 	 * Create a new terrain
 	 *
@@ -78,87 +66,40 @@ public class Terrain extends BaseWorld {
 	}
 
 	public void initTerrain() {
-//		ArrayList<Point2D> vertices = new ArrayList<>();
-//		ArrayList<Integer> indices = new ArrayList<Integer>();
-//		for(int z = 0; z < depth -1; z++) {
-//			for(int x = 0; x < width -1; x++) {
-//				Point2D p = new Point2D(x, z);
-//				vertices.add(p);
-//				System.out.println("x = " + p.getX() + "z = " + p.getY());
-//			}
-//		}
-//		
-//		System.out.println("vertices list: " + vertices);
-//		
-//		for(int z = 0; z < depth -2; z++) {
-//			for(int x = 0; x < width -2; x++) {
-//				Point2D p0 = new Point2D(x, z);
-//				Point2D p1 = new Point2D(x, z+1);
-//				Point2D p2 = new Point2D(x+1, z+1);
-//				
-//				indices.add(vertices.indexOf(p0));
-//				indices.add(vertices.indexOf(p1));
-//				indices.add(vertices.indexOf(p2));
-//				
-//				System.out.println("p0,x = " + p0.getX() + "p0,z = " + p0.getY());
-//				
-//				p0 = new Point2D(x, z);
-//				p1 = new Point2D(x+1, z);
-//				p2 = new Point2D(x+1, z+1);
-//				indices.add(vertices.indexOf(p0));
-//				indices.add(vertices.indexOf(p1));
-//				indices.add(vertices.indexOf(p2));
-//				
-//				
-//				
-//				
-//			}
-//		}
-//	
-//		System.out.println(indices);
-			
-		List<Point3D> vertices = new ArrayList<>();
-		System.out.println(altitudes);
-		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
-			for (int zOffset = 0; zOffset < depth - 1; zOffset++) {
-
-				Point3D top_left = convertToPoint3d(xOffset, zOffset);
-				Point3D bot_left = convertToPoint3d(xOffset, zOffset + 1);
-				Point3D top_right = convertToPoint3d(xOffset + 1, zOffset);
-				Point3D bot_right = convertToPoint3d(xOffset + 1, zOffset + 1);
-
-				TriangleWorld tri = new TriangleWorld(new Line3D(top_left, bot_left), new Line3D(bot_left, top_right),
-						new Line3D(top_right, top_left));
-				allTriangles.add(tri);
-
-				vertices.add(top_left);
-				vertices.add(bot_left);
-				vertices.add(bot_right);
-				 vertices.add(convertToPoint3d(xOffset, zOffset));
-				 vertices.add(convertToPoint3d(xOffset, zOffset+1));
-				 vertices.add(convertToPoint3d(xOffset+1, zOffset));
-
-				tri = new TriangleWorld(new Line3D(top_right, bot_left), new Line3D(bot_left, bot_right),
-						new Line3D(bot_right, top_right));
-				allTriangles.add(tri);
-
-				vertices.add(top_left);
-				vertices.add(bot_right);
-				vertices.add(top_right);
-
-				 vertices.add(convertToPoint3d(xOffset, zOffset+1));
-				 vertices.add(convertToPoint3d(xOffset+1, zOffset+1));
-				 vertices.add(convertToPoint3d(xOffset+1, zOffset));
-				 vertices.add(convertToPoint3d(xOffset, zOffset+1));
+		ArrayList<Point3D> vertices = new ArrayList<>();
+		ArrayList<Integer> indices = new ArrayList<Integer>();
+		for(int z = 0; z < depth -1; z++) {
+			for(int x = 0; x < width -1; x++) {
+//				Point3D p = new Point3D(x,0, z);
+				Point3D p = convertToPoint3d(x, z);
+				vertices.add(p);
+			}
+		}
+		for(int z = 0; z < depth -2; z++) {
+			for(int x = 0; x < width -2; x++) {
+				Point3D p0 = convertToPoint3d(x, z);
+				Point3D p1 = convertToPoint3d(x, z+1);
+				Point3D p2 = convertToPoint3d(x+1, z+1);
+				indices.add(vertices.indexOf(p0));
+				indices.add(vertices.indexOf(p1));
+				indices.add(vertices.indexOf(p2));
+				
+				p0 = convertToPoint3d(x, z);
+				p1 = convertToPoint3d(x+1, z+1);
+				p2 = convertToPoint3d(x+1, z);
+				indices.add(vertices.indexOf(p0));
+				indices.add(vertices.indexOf(p1));
+				indices.add(vertices.indexOf(p2));
 
 			}
 		}
-		fan = new TriangleMesh(vertices,true);
+	
+		System.out.println(indices);
+		fan = new TriangleMesh(vertices, indices, true);
 	}
 
 	private void drawTrees(GL3 gl, CoordFrame3D frame) {
 		for (Tree tree : trees) {
-
 			tree.draw(gl, frame);
 		}
 	}
@@ -209,8 +150,14 @@ public class Terrain extends BaseWorld {
 	}
 
 	private Point3D convertToPoint3d(int x, int z) {
-		System.out.println(x + " ," + altitudes[z][x] + " ," + z);
-		return new Point3D((float) x, altitudes[z][x], (float) z);
+		float a = 0;
+		if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
+			a = 0;	
+		} else {
+			a = altitudes[z][x];
+		}
+		System.out.println(x + " ," + a + " ," + z);
+		return new Point3D((float) x, a, (float) z);
 	}
 
 	public Vector3 getSunlight() {
@@ -252,10 +199,6 @@ public class Terrain extends BaseWorld {
 		altitudes[x][z] = h;
 	}
 
-       
-        
-    
-
 	/**
 	 * Get the altitude at an arbitrary point. Non-integer points should be
 	 * interpolated from neighbouring grid points
@@ -265,96 +208,64 @@ public class Terrain extends BaseWorld {
 	 * @return
 	 */
 	public float altitude(float x, float z) {
-
-
-//		 checking if point is integer, so just take the altitude
-		 if(x==Math.round(x) && z==Math.round(z)) {
-		 return altitudes[(int)x][(int) z];
-		 }
-		//
-		float altitude = 0;
-		//
-		// int p1_z = (int) Math.floor(z);
-		// int p2_z = (int) Math.ceil(z);
-		//
-		// int p1_x = (int) Math.floor(x);
-		// int p2_x = (int) Math.ceil(x);
-		//
-		// Point3D pt1 = new Point3D(p1_x, 0, p1_z);
-		// Point3D pt2 = new Point3D(p2_x, 0, p2_z);
-		//
-		// TriangleWorld result = null;
-		// for (TriangleWorld triangleWorld : allTriangles) {
-		// if(triangleWorld.isPointInTriangle(pt1)) {
-		// result = triangleWorld;
-		// break;
-		// }
-		// else if(triangleWorld.isPointInTriangle(pt2)) {
-		// result = triangleWorld;
-		// break;
-		// }
-		// }
-		// if(result != null) {
-		// System.out.println("Found Triangle");
-		// }
-		// altitude = altitudes[x][z];
-		// TODO: Implement this
-
-		// float p_z_1 = ((z - p1_z) / (p2_z - p1_z)) * p2_z;
-		// float p_z_2 = ((p2_z - z) / (p2_z - p1_z)) * p1_z;
-		// float p_z = p_z_1 + p_z_2;
-		// // go left and find interecting point and go right find intersecting point,
-		// find the interpolation
-		//
-		// altitude = p_z;
+		float a = 0;
+		//checking if point is integer hence on the grid
+		if(x==Math.round(x) && z==Math.round(z)) {
+			if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
+				a = 0;	
+			} else {
+				a = altitudes[(int) z][(int) x];
+			}
+		// if point not on grid, calculating the altitude
+		 } else {
+				if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
+					a = 0;	
+				} else {
+					int x0 = (int) Math.floor(x);
+					int z0 = (int) Math.floor(z);
+					float px = x - x0;
+					float pz = z - z0;
+				     
+				    int x1 = (int) Math.ceil(x);
+				    int z1 = (int) Math.ceil(z);
 		
-		 int x1 = (int) Math.floor(x);
-	     int z1 = (int) Math.floor(z);
-	     int x2 = (int) Math.ceil(x);
-	     int z2 = (int) Math.ceil(z);
-
-	     
-	     Point3D p1 = convertToPoint3d(x1, z1);
-	     Point3D p2 = convertToPoint3d(x2, z1);
-	     Point3D p3 = convertToPoint3d(x1, z2);
-	     Point3D p4 = convertToPoint3d(x2, z2);
-	        
-	     if(x > z) {
-	    	   	Point3D r1 = p1;
-	    	   	Point3D r2 = p2;
-	    	   	Point3D r3 = p4;
-	    	   	
-	    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
-	    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
-	    	   	float L3 = 1 - L1 - L2;
-	    	   	
-	    	   	altitude = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
-	    	   	
-	     } else if (x < z) {
-	    	   	Point3D r1 = p1;
-	    	   	Point3D r2 = p3;
-	    	   	Point3D r3 = p4;
-	    	   	
-	    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
-	    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
-	    	   	float L3 = 1 - L1 - L2;
-	    	   	
-	    	   	altitude = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
-	     }
-	     
-	     
-	     else {
-	    	   	Point3D r1 = p1;
-	    	   	Point3D r2 = p4;
-	    	   	Point3D r3 = null;
-	    	   	
-	    	   	double t = r1.getX()-x;
-	    	   	
-	    	   	altitude = (float) (t*r1.getY() + (t-1)*r2.getY());
-	    	   	
-		}
-	     
-		return -altitude;
+				    Point3D p1 = convertToPoint3d(x0, z0);
+				    Point3D p2 = convertToPoint3d(x1, z0);
+				    Point3D p3 = convertToPoint3d(x0, z1);
+				    Point3D p4 = convertToPoint3d(x1, z1);
+			        
+				    if(px < pz) {
+				    		Point3D r1 = p1;
+				    	  	Point3D r2 = p3;
+				    	   	Point3D r3 = p4;
+				    	   	
+				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+				    	   	float L3 = 1 - L1 - L2;
+				    	   	
+				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
+			    	   	
+				    } else if (px > pz) {
+				    	   	Point3D r1 = p1;
+				    	   	Point3D r2 = p4;
+				    	   	Point3D r3 = p2;
+				    	   	
+				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+				    	   	float L3 = 1 - L1 - L2;
+				    	   	
+				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
+				    } else {
+				    	   	Point3D r1 = p1;
+				    	   	Point3D r2 = p4;
+				    	   	
+				    	   	double t = r1.getX()-x;
+				    	   	
+				    	   	a = (float) (t*r1.getY() + (t-1)*r2.getY());
+				    }  	
+				}
+		 	}
+		return a;
 	}
 
 	/**
