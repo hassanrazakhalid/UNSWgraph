@@ -54,10 +54,6 @@ public class Terrain extends BaseWorld {
 
 //    Point3DBuffer quadTexCoords;
     Point2DBuffer quadTexCoords;
-    
-
-	private List<TriangleWorld> allTriangles = new ArrayList<>();
-
 
 	/**
 	 * Create a new terrain
@@ -201,7 +197,7 @@ public class Terrain extends BaseWorld {
 		if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
 			a = 0;	
 		} else {
-			a = altitudes[z][x];
+			a = altitudes[x][z];
 		}
 		System.out.println(x + " ," + a + " ," + z);
 		return new Point3D((float) x, a, (float) z);
@@ -261,7 +257,7 @@ public class Terrain extends BaseWorld {
 			if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
 				a = 0;	
 			} else {
-				a = altitudes[(int) z][(int) x];
+				a = altitudes[(int) x][(int) z];
 			}
 		// if point not on grid, calculating the altitude
 		 } else {
@@ -302,13 +298,13 @@ public class Terrain extends BaseWorld {
 				    	   	float L3 = 1 - L1 - L2;
 				    	   	
 				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
-				    } else {
+				    } else if (px == pz) {
 				    	   	Point3D r1 = p1;
-				    	   	Point3D r2 = p4;
+				    	   	Point3D r2 = p4; 	
 				    	   	
-				    	   	double t = r1.getX()-x;
+				    	   	double t = r2.getX()-x;	
 				    	   	
-				    	   	a = (float) (t*r1.getY() + (t-1)*r2.getY());
+				    	   	a = (float) (t*r1.getY() + (1-t)*r2.getY());
 				    }  	
 				}
 		 	}

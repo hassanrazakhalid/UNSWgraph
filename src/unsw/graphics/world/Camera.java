@@ -7,7 +7,7 @@ public class Camera {
 	private Terrain terrain;
 	private Point3D globalPosition;
 	private float globalRotation;
-	
+
 
 	public Camera(Terrain terrain) {
 		globalPosition = new Point3D(0, 1f, 0);
@@ -26,11 +26,11 @@ public class Camera {
 	
 	public void up(Terrain terrain) {
 		globalPosition = this.globalPosition.translate(-0.5f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, -0.5f*(float)Math.cos(Math.toRadians(globalRotation)));
-		setGlobalPosition(this.globalPosition.getX(), this.globalPosition.getZ());
+		setGlobalPosition(globalPosition.getX(), globalPosition.getZ());
 	}
 	public void down(Terrain terrain) {
 		globalPosition = this.globalPosition.translate(0.5f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, 0.5f*(float)Math.cos(Math.toRadians(globalRotation)));
-		setGlobalPosition(this.globalPosition.getX(), this.globalPosition.getZ());
+		setGlobalPosition(globalPosition.getX(), globalPosition.getZ());
 	}
 
 	public void left() {
