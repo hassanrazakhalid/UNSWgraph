@@ -22,7 +22,7 @@ public class Point2DBuffer {
 
     private FloatBuffer floatBuffer;
 
-    private int capacity;
+    public int capacity;
 
     /**
      * Construct a new buffer with the given capacity.

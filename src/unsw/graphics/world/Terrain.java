@@ -7,8 +7,6 @@ import java.util.List;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
-import com.sun.javafx.geom.Vec2d;
-
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
 import unsw.graphics.Point2DBuffer;
@@ -54,8 +52,9 @@ public class Terrain extends BaseWorld {
 	Texture texture;
     private String textureFileName = "res/textures/grass.bmp";
     private String textureExt = "bmp";
-    Point3DBuffer quadTexCoords;
-
+//    Point3DBuffer quadTexCoords;
+    Point2DBuffer quadTexCoords;
+    
 
 	private List<TriangleWorld> allTriangles = new ArrayList<>();
 
@@ -80,7 +79,8 @@ public class Terrain extends BaseWorld {
 
 		List<Point3D> vertices = new ArrayList<>();
 		System.out.println(altitudes);
-		quadTexCoords = new Point3DBuffer(width * depth * 6);
+//		quadTexCoords = new Point3DBuffer(width * depth * 6);
+		quadTexCoords = new Point2DBuffer(width * depth * 6);
 		
 		int textureIndex = 0 ;
 		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
@@ -95,9 +95,13 @@ public class Terrain extends BaseWorld {
 						new Line3D(top_right, top_left));
 				allTriangles.add(tri);
 
-		        quadTexCoords.put(textureIndex++, 0, 0, 0);
-		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
-		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+//		        quadTexCoords.put(textureIndex++, 0, 0, 0);
+//		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+//		        quadTexCoords.put(textureIndex++, 1f, 1f, 1);
+				
+				quadTexCoords.put(textureIndex++, 0, 0);
+		        quadTexCoords.put(textureIndex++, 1f, 0f);
+		        quadTexCoords.put(textureIndex++, 1f, 1f);
 		        
 				
 				vertices.add(top_left);
@@ -115,9 +119,12 @@ public class Terrain extends BaseWorld {
 				vertices.add(bot_left);
 				vertices.add(bot_right);
 				
-				quadTexCoords.put(textureIndex++, 0, 0, 0);
-		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
-		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+//				quadTexCoords.put(textureIndex++, 0, 1, 0);
+//		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
+//		        quadTexCoords.put(textureIndex++, 1f, 1f, 1);
+				quadTexCoords.put(textureIndex++, 0, 0);
+		        quadTexCoords.put(textureIndex++, 1f, 0f);
+		        quadTexCoords.put(textureIndex++, 1f, 1f);
 
 			}
 		}
@@ -154,9 +161,9 @@ public class Terrain extends BaseWorld {
 		lightIntensity = 1f;
 
 		ambientCoefficient = 1;
-		diffuseCoefficient = 0.4f;
-		specularCoefficient = 0.2f;
-		phongExponent = 8;
+		diffuseCoefficient = 0.1f;
+		specularCoefficient = 0.8f;
+		phongExponent = 1;
 
 		Shader.setPoint3D(gl, "lightIntensity", new Point3D(lightIntensity, lightIntensity, lightIntensity));
 		Shader.setPoint3D(gl, "ambientIntensity", new Point3D(ambientIntensity, ambientIntensity, ambientIntensity));
@@ -166,12 +173,13 @@ public class Terrain extends BaseWorld {
 				new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
 		Shader.setFloat(gl, "phongExp", phongExponent);
 		
+		
 		int[] names = new int[1];
 		// Copy across the buffer for the texture coordinates
 		gl.glGenBuffers(1, names, 0);
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
         gl.glBufferData(GL.GL_ARRAY_BUFFER,
-                quadTexCoords.capacity() * 2 * Float.BYTES,
+                quadTexCoords.capacity * 2 * Float.BYTES,
                 quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
         gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 	}	
