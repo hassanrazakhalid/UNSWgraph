@@ -9,11 +9,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.CoordFrame3D;
-
-import unsw.graphics.Matrix4;
 import unsw.graphics.Point2DBuffer;
-import unsw.graphics.Point3DBuffer;
-
 import unsw.graphics.Shader;
 import unsw.graphics.Texture;
 import unsw.graphics.Vector3;
@@ -75,13 +71,15 @@ public class Terrain extends BaseWorld {
 	public void initTerrain() {
 		ArrayList<Point3D> vertices = new ArrayList<>();
 		ArrayList<Integer> indices = new ArrayList<Integer>();
+		
+		//creating a vertex for all points in the grid
 		for(int z = 0; z < depth -1; z++) {
 			for(int x = 0; x < width -1; x++) {
-//				Point3D p = new Point3D(x,0, z);
 				Point3D p = convertToPoint3d(x, z);
 				vertices.add(p);
 			}
 		}
+		//adding the indicies of the vertices in the order the triangles in the mesh is drawn 
 		for(int z = 0; z < depth -2; z++) {
 			for(int x = 0; x < width -2; x++) {
 				Point3D p0 = convertToPoint3d(x, z);
@@ -100,33 +98,18 @@ public class Terrain extends BaseWorld {
 			}
 		}
 
-		quadTexCoords = new Point2DBuffer(width * depth * 6);
-//		quadTexCoords = new Point2DBuffer(width * depth * 6);
-		
+		quadTexCoords = new Point2DBuffer(width * depth * 6);	
 		int textureIndex = 0 ;
 		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
 			for (int zOffset = 0; zOffset < depth - 1; zOffset++) {
-
-//		        quadTexCoords.put(textureIndex++, 0, 0, 0);
-//		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
-//		        quadTexCoords.put(textureIndex++, 1f, 1f, 1);
 				
 				quadTexCoords.put(textureIndex++, 0, 0); // lower left
 		        quadTexCoords.put(textureIndex++, 1f, 0f);
 		        quadTexCoords.put(textureIndex++, 1f, 1f);
 		        quadTexCoords.put(textureIndex++, 0f, 1f);
-
-				
-//				quadTexCoords.put(textureIndex++, 0, 1, 0);
-//		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
-//		        quadTexCoords.put(textureIndex++, 1f, 1f, 1);
-//				quadTexCoords.put(textureIndex++, 0.5f, 1);
-//		        quadTexCoords.put(textureIndex++, 1f, 0f);
-//		        quadTexCoords.put(textureIndex++, 1f, 1f);
 			}
 		}
 	
-//		System.out.println(indices);
 		fan = new TriangleMesh(vertices, indices, true);
 
 	}
@@ -157,7 +140,6 @@ public class Terrain extends BaseWorld {
 
 		ambientIntensity = 0.1f;
 		lightIntensity = 1f;
-
 		ambientCoefficient = 1;
 		diffuseCoefficient = 0.1f;
 		specularCoefficient = 0.8f;
@@ -188,11 +170,10 @@ public class Terrain extends BaseWorld {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
         
 		fan.draw(gl, frame);
-		drawTrees(gl, frame);
-		
-		
+		drawTrees(gl, frame);	
 	}
 
+	//method to convert a 2D point on the grid to 3D with its altitude included 
 	private Point3D convertToPoint3d(int x, int z) {
 		float a = 0;
 		if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
@@ -200,7 +181,6 @@ public class Terrain extends BaseWorld {
 		} else {
 			a = altitudes[x][z];
 		}
-		System.out.println(x + " ," + a + " ," + z);
 		return new Point3D((float) x, a, (float) z);
 	}
 
@@ -262,9 +242,11 @@ public class Terrain extends BaseWorld {
 			}
 		// if point not on grid, calculating the altitude
 		 } else {
+			 	// if point outside the terrain, altitude = 0
 				if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
 					a = 0;	
-				} else {
+				} else { 
+					//finding inside which square on the grid the point is
 					int x0 = (int) Math.floor(x);
 					int z0 = (int) Math.floor(z);
 					float px = x - x0;
@@ -277,7 +259,7 @@ public class Terrain extends BaseWorld {
 				    Point3D p2 = convertToPoint3d(x1, z0);
 				    Point3D p3 = convertToPoint3d(x0, z1);
 				    Point3D p4 = convertToPoint3d(x1, z1);
-			        
+			        //lower triangle of the square
 				    if(px < pz) {
 				    		Point3D r1 = p1;
 				    	  	Point3D r2 = p3;
@@ -288,7 +270,7 @@ public class Terrain extends BaseWorld {
 				    	   	float L3 = 1 - L1 - L2;
 				    	   	
 				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
-			    	   	
+			    	   	//upper triangle of the square
 				    } else if (px > pz) {
 				    	   	Point3D r1 = p1;
 				    	   	Point3D r2 = p4;
@@ -299,6 +281,7 @@ public class Terrain extends BaseWorld {
 				    	   	float L3 = 1 - L1 - L2;
 				    	   	
 				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
+				    //on the diagonal splitting the two triangles
 				    } else if (px == pz) {
 				    	   	Point3D r1 = p1;
 				    	   	Point3D r2 = p4; 	

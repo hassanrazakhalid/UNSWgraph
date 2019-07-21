@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import com.jogamp.opengl.GL;
-
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.opengl.GL3;
-
 
 import unsw.graphics.Application3D;
 import unsw.graphics.CoordFrame3D;
@@ -55,8 +53,9 @@ public class World extends Application3D implements KeyListener{
 			afterInitFirstTime = true;
 			terrain.initGL(gl);
 		}
+		//computing the frame for the view matrix
 		cameraFrame = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D());
-		cameraFrame.draw(gl);	
+	
 		Shader.setViewMatrix(gl, cameraFrame.getMatrix());
 		terrain.draw(gl, CoordFrame3D.identity());
 	}

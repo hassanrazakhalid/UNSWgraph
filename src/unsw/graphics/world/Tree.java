@@ -36,13 +36,10 @@ public class Tree extends BaseWorld {
     
     
     public void draw(GL3 gl, CoordFrame3D frame) {
-//	    	CoordFrame3D treeFrame = frame.translate(new Point3D(0, 0, 0).minus(position).asPoint3D());
 	    	CoordFrame3D treeFrame = frame.translate(position)
-	    			.translate(0, 1.1f, 0)
+	    			.translate(0, 1f, 0)
 	    			.scale(scaleFactor, scaleFactor, scaleFactor);
-//	   
-	    	
-	//    triangleMesh.draw(gl, modelMatrix);
+
 	    	treeFrame.draw(gl);
 	    	triangleMesh.draw(gl, treeFrame);
     }
