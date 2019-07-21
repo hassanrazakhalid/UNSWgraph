@@ -100,8 +100,8 @@ public class Terrain extends BaseWorld {
 			}
 		}
 
-//		quadTexCoords = new Point3DBuffer(width * depth * 6);
 		quadTexCoords = new Point2DBuffer(width * depth * 6);
+//		quadTexCoords = new Point2DBuffer(width * depth * 6);
 		
 		int textureIndex = 0 ;
 		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
@@ -111,21 +111,22 @@ public class Terrain extends BaseWorld {
 //		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
 //		        quadTexCoords.put(textureIndex++, 1f, 1f, 1);
 				
-				quadTexCoords.put(textureIndex++, 0, 0);
+				quadTexCoords.put(textureIndex++, 0, 0); // lower left
 		        quadTexCoords.put(textureIndex++, 1f, 0f);
 		        quadTexCoords.put(textureIndex++, 1f, 1f);
+		        quadTexCoords.put(textureIndex++, 0f, 1f);
 
 				
 //				quadTexCoords.put(textureIndex++, 0, 1, 0);
 //		        quadTexCoords.put(textureIndex++, 1f, 0f, 1);
 //		        quadTexCoords.put(textureIndex++, 1f, 1f, 1);
-				quadTexCoords.put(textureIndex++, 0, 0);
-		        quadTexCoords.put(textureIndex++, 1f, 0f);
-		        quadTexCoords.put(textureIndex++, 1f, 1f);
+//				quadTexCoords.put(textureIndex++, 0.5f, 1);
+//		        quadTexCoords.put(textureIndex++, 1f, 0f);
+//		        quadTexCoords.put(textureIndex++, 1f, 1f);
 			}
 		}
 	
-		System.out.println(indices);
+//		System.out.println(indices);
 		fan = new TriangleMesh(vertices, indices, true);
 
 	}
