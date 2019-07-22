@@ -33,7 +33,8 @@ void main()
 //    vec3 v = normalize(-viewPosition.xyz);
 //    vec3 r = normalize(reflect(-s,m_unit));
 //
-//    vec3 ambient = ambientIntensity*ambientCoeff;
+//    vec3 ambient = ambientIntensity*ambientCoeff
+	
 //    vec3 diffuse = max(lightIntensity*diffuseCoeff*dot(m_unit,s), 0.0);
 //    vec3 specular;
 //

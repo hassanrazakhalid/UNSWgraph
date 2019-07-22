@@ -72,11 +72,18 @@ public class Terrain extends BaseWorld {
 		ArrayList<Point3D> vertices = new ArrayList<>();
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		
+		int textureIndex = 0 ;
+		quadTexCoords = new Point2DBuffer((depth -1) * (width -1)  * 1);
 		//creating a vertex for all points in the grid
 		for(int z = 0; z < depth -1; z++) {
 			for(int x = 0; x < width -1; x++) {
 				Point3D p = convertToPoint3d(x, z);
 				vertices.add(p);
+				
+				quadTexCoords.put(textureIndex++, x, z); // lower left
+//				quadTexCoords.put(textureIndex++, 0f, 1f);
+//				quadTexCoords.put(textureIndex++, 1f, 0f);
+//				quadTexCoords.put(textureIndex++, 1f, 1f);
 			}
 		}
 		//adding the indicies of the vertices in the order the triangles in the mesh is drawn 
@@ -98,17 +105,17 @@ public class Terrain extends BaseWorld {
 			}
 		}
 
-		quadTexCoords = new Point2DBuffer(width * depth * 6);	
-		int textureIndex = 0 ;
-		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
-			for (int zOffset = 0; zOffset < depth - 1; zOffset++) {
-				
-				quadTexCoords.put(textureIndex++, 0, 0); // lower left
-		        quadTexCoords.put(textureIndex++, 1f, 0f);
-		        quadTexCoords.put(textureIndex++, 1f, 1f);
-		        quadTexCoords.put(textureIndex++, 0f, 1f);
-			}
-		}
+			
+		
+//		for (int xOffset = 0; xOffset < width - 1; xOffset++) {
+//			for (int zOffset = 0; zOffset < depth - 1; zOffset++) {
+//				
+//				quadTexCoords.put(textureIndex++, 0, 0); // lower left
+//		        quadTexCoords.put(textureIndex++, 1f, 0f);
+//		        quadTexCoords.put(textureIndex++, 1f, 1f);
+//		        quadTexCoords.put(textureIndex++, 0f, 1f);
+//			}
+//		}
 	
 		fan = new TriangleMesh(vertices, indices, true);
 
