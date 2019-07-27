@@ -1,8 +1,18 @@
 package unsw.graphics.world;
 
+import java.awt.Color;
+import java.util.Arrays;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+
+import unsw.graphics.CoordFrame3D;
+import unsw.graphics.Shader;
+import unsw.graphics.geometry.Line3D;
+import unsw.graphics.geometry.LineStrip2D;
 import unsw.graphics.geometry.Point2D;
+import unsw.graphics.geometry.Point3D;
+import unsw.graphics.geometry.TriangleMesh;
 
 /**
  * COMMENT: Comment Road 
@@ -13,7 +23,6 @@ public class Road {
 
     private List<Point2D> points;
     private float width;
-    
     /**
      * Create a new road with the specified spine 
      *
@@ -105,6 +114,4 @@ public class Road {
         // this should never happen
         throw new IllegalArgumentException("" + i);
     }
-
-
 }

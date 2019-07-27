@@ -10,12 +10,14 @@ uniform mat4 view_matrix;
 uniform vec3 sunVec;
 uniform vec3 lightIntensity;
 uniform vec3 ambientIntensity;
+uniform float diffuseCoeff;
 
 // Material properties
-uniform vec3 ambientCoeff;
-uniform vec3 diffuseCoeff;
+uniform float ambientCoeff;
+
 uniform vec3 specularCoeff;
 uniform float phongExp;
+
 
 in vec4 viewPosition;
 in vec3 m;
@@ -53,9 +55,9 @@ void main()
 	vec3 m_unit = normalize(m);
 	vec3 lightDir_unit = normalize(sunVec - viewPosition.xyz);
 	float diff = max(dot(m_unit, lightDir_unit), 0.0);
-	float ambientStrength = 0.4;
+//	float ambientStrength = 0.4;
 	vec3 lightColor = vec3(1,1,1);
-	vec3 ambient = lightColor * ambientStrength;
+	vec3 ambient = lightColor * diffuseCoeff;
 //	vec4 result = input_color * ambient;
 //	outputColor = result;
 	

@@ -97,19 +97,28 @@ public class World extends Application3D implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
-		if(code == KeyEvent.VK_UP){
+		switch(code) {
+		case KeyEvent.VK_UP:
 			camera.up(terrain);
-		}
-		if(code == KeyEvent.VK_DOWN){
+			break;
+		case KeyEvent.VK_DOWN:
 			camera.down(terrain);
-		}
-		if(code == KeyEvent.VK_LEFT){
+			break;
+		case KeyEvent.VK_LEFT:
 			camera.left();
-		}
-		if(code == KeyEvent.VK_RIGHT){
+			break;
+		case KeyEvent.VK_RIGHT:
 			camera.right();
+			break;
+		case KeyEvent.VK_N:
+			terrain.nightMode();
+			break;
+		case KeyEvent.VK_D:
+			terrain.dayMode();
+			break;
+		default:
+			break;
 		}
-		
 	}
 }
 
