@@ -8,9 +8,28 @@ uniform mat4 view_matrix;
 // Light properties
 //uniform vec3 lightPos;
 uniform vec3 sunVec;
-uniform vec3 lightIntensity;
-uniform vec3 ambientIntensity;
 uniform float diffuseCoeff;
+
+uniform int isDay;
+
+//setting light
+struct Light {
+	vec3  position;
+    vec3  direction;
+    float cutOff;  
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+	
+    float ambientStrength;
+    float specularStrength;
+    
+    float constant;
+    float linear;
+    float quadratic;
+}; 
+uniform Light light;
 
 // Material properties
 uniform float ambientCoeff;
@@ -54,19 +73,54 @@ void main()
 	
 	vec3 m_unit = normalize(m);
 	vec3 lightDir_unit = normalize(sunVec - viewPosition.xyz);
-	float diff = max(dot(m_unit, lightDir_unit), 0.0);
-//	float ambientStrength = 0.4;
+	
 	vec3 lightColor = vec3(1,1,1);
-	vec3 ambient = lightColor * diffuseCoeff;
+	vec3 ambient = lightColor * light.ambientStrength;
 //	vec4 result = input_color * ambient;
 //	outputColor = result;
 	
+	//calculating diffuse color
+	float diff = max(dot(m_unit, lightDir_unit), 0.0);
 	vec3 diffuse = diff * lightColor;
 	
-	vec3 intensity = ambient + diffuse;
-//	 * texture(tex, texCoordFrag)
-	vec4 result = vec4(intensity, 1) * texture(tex, texCoordFrag);
-	outputColor = result;
+	//calculating specular light
+	vec3 viewDir = normalize(light.position - viewPosition.xyz);
+	vec3 reflectDir = reflect(-normalize(light.direction), m_unit); 
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 8);
+	vec3 specular = light.specularStrength * spec * lightColor;  
+		
+	vec3 intensity = ambient + diffuse + specular;
+	
+	if(isDay == 1) {
+		vec4 result = vec4(intensity, 1) * texture(tex, texCoordFrag);
+		outputColor = result;
+	}
+	else {
+		
+		float distance    = length(light.position - viewPosition.xyz);
+		float attenuation = 1.0 / (light.constant + light.linear * distance + 
+		    		    light.quadratic * (distance * distance));
+		
+//		ambient *= attenuation;
+//		specular *= attenuation;
+//		diffuse *= diffuse;
+		
+		float theta = dot(lightDir_unit, normalize(light.direction));
+	    
+		if(theta < light.cutOff) 
+		{       
+//		   do lighting calculations
+			intensity *= attenuation;
+					
+			vec4 result = vec4(intensity, 1) * texture(tex, texCoordFrag);
+			outputColor = result;
+		}
+		else {
+			vec4 result = vec4(ambient + diffuse, 1) * texture(tex, texCoordFrag);
+//			outputColor = vec4(0,0,0,1); //result;
+			outputColor = result;
+		}
+	}	
 //	outputColor = input_color * texture(tex, texCoordFrag);
 //	outputColor = vec4(result, 1);
 	

@@ -45,7 +45,8 @@ public class Terrain extends BaseWorld {
     private float diffuseCoefficient;
     private float specularCoefficient;
     private float phongExponent;
-    
+    private unsw.graphics.world.Camera camera;
+    private int isDay = 1;
 	
 	//Texture vars
 	Texture texture;
@@ -124,6 +125,10 @@ public class Terrain extends BaseWorld {
 	
 		fan = new TriangleMesh(vertices, indices, true);
 
+	}
+	
+	public void setCamera(unsw.graphics.world.Camera camera) {
+		this.camera = camera;
 	}
 
 	private void drawTrees(GL3 gl, CoordFrame3D frame) {
@@ -208,17 +213,30 @@ public class Terrain extends BaseWorld {
 		ambientIntensity = 0.1f;
 		lightIntensity = 1f;
 		ambientCoefficient = 1;
-		diffuseCoefficient = 0.1f;
+		diffuseCoefficient = 0.8f;
 		specularCoefficient = 0.8f;
 		phongExponent = 1;
 
 		Shader.setPoint3D(gl, "lightIntensity", new Point3D(lightIntensity, lightIntensity, lightIntensity));
 		Shader.setPoint3D(gl, "ambientIntensity", new Point3D(ambientIntensity, ambientIntensity, ambientIntensity));
 		Shader.setFloat(gl, "diffuseCoeff", diffuseCoefficient);
-//		Shader.setPoint3D(gl, "ambientCoeff", new Point3D(ambientCoefficient, ambientCoefficient, ambientCoefficient));
-		Shader.setPoint3D(gl, "diffuseCoeff", new Point3D(diffuseCoefficient, diffuseCoefficient, diffuseCoefficient));
-		Shader.setPoint3D(gl, "specularCoeff",
-				new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
+		Shader.setInt(gl, "isDay", isDay);
+		
+		Shader.setFloat(gl, "light.cutOff", (float)Math.cos(Math.toRadians(12.5f)));
+//		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
+		Shader.setPoint3D(gl, "light.position",  new Point3D(0, 0, 0));
+		Shader.setPoint3D(gl, "light.direction", camera.getDirection());
+		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
+		Shader.setFloat(gl, "light.specularStrength", specularCoefficient);
+		
+		
+		Shader.setFloat(gl, "light.constant", 1.0f);
+		Shader.setFloat(gl, "light.linear", 0.09f);
+		Shader.setFloat(gl, "light.quadratic", 0.032f);
+		
+//		Shader.setPoint3D(gl, "diffuseCoeff", new Point3D(diffuseCoefficient, diffuseCoefficient, diffuseCoefficient));
+//		Shader.setPoint3D(gl, "specularCoeff",
+//				new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
 		Shader.setFloat(gl, "phongExp", phongExponent);
 		
 		
@@ -235,10 +253,11 @@ public class Terrain extends BaseWorld {
 	public void draw(GL3 gl, CoordFrame3D frame) {
 		
 		Shader.setPenColor(gl, Color.black);
+		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		updateDiffuseCoff(gl);
 //		gl.glActiveTexture(GL.GL_TEXTURE0);
 //        gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
-        
+		Shader.setInt(gl, "isDay", isDay);
 //		gl.glClearColor(0f, 0f, 0f, 1.0f);
 //		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		fan.draw(gl, frame);
@@ -253,11 +272,12 @@ public class Terrain extends BaseWorld {
 	
 	public void nightMode() {
 		
-		diffuseCoefficient = 0.1f;
+		isDay = 0;
 	}
 	
 	public void dayMode() {
-		diffuseCoefficient = 0.8f;
+		
+		isDay = 1;
 	}
 
 	//method to convert a 2D point on the grid to 3D with its altitude included 

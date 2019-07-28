@@ -52,6 +52,11 @@ public class Camera {
 		this.globalRotation = globalRotation;
 	}
 
-
+//	public 
+	
+	public Point3D getDirection() {
+		return new Point3D(0, 0, 0.5f);
+	}
+	
 	
 }

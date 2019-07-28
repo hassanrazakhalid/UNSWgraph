@@ -33,7 +33,7 @@ void main() {
 
     // The position in CVV coordinates
     gl_Position = proj_matrix * viewPosition;
-
+    globalPosition = gl_Position;
     // Compute the normal in view coordinates
     m = normalize(view_matrix*model_matrix * vec4(normal, 0)).xyz;
     

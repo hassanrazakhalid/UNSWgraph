@@ -256,4 +256,11 @@ public class Shader {
         int loc = gl.glGetUniformLocation(ids[0], var);
         gl.glUniform1f(loc, f);
     }
+    
+    public static void setInt(GL3 gl, String var, int f) {
+        int ids[] = new int[1];
+        gl.glGetIntegerv(GL3.GL_CURRENT_PROGRAM, ids, 0);
+        int loc = gl.glGetUniformLocation(ids[0], var);
+        gl.glUniform1i(loc, f);
+    }
 }
