@@ -67,6 +67,7 @@ public class Line3D {
         
         gl.glVertexAttribPointer(Shader.POSITION, 3, GL.GL_FLOAT, false, 0, 0);
         Shader.setModelMatrix(gl, frame.getMatrix());
+        
         gl.glDrawArrays(GL.GL_LINES, 0, 2);
         
         gl.glDeleteBuffers(1, names, 0);

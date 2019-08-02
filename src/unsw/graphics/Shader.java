@@ -43,6 +43,8 @@ public class Shader {
      */
     public static final int NORMAL = 1;
     public static final int TEX_COORD = 2;
+//    public static final int DIFFUSE_COFF = 3;
+    
 
     private int id;
 
@@ -77,6 +79,7 @@ public class Shader {
         gl.glBindAttribLocation(id, POSITION, "position");
         gl.glBindAttribLocation(id, NORMAL, "normal");
         gl.glBindAttribLocation(id, TEX_COORD, "texCoord");
+//        gl.glBindAttribLocation(id, DIFFUSE_COFF, "diffuseCoeff");
         
         shaderProgram.link(gl, System.err);
         
@@ -85,6 +88,8 @@ public class Shader {
             gl.glEnableVertexAttribArray(NORMAL);
         if (gl.glGetAttribLocation(id, "texCoord") != -1)
             gl.glEnableVertexAttribArray(TEX_COORD);
+//        if (gl.glGetAttribLocation(id, "diffuseCoeff") != -1)
+//            gl.glEnableVertexAttribArray(DIFFUSE_COFF);
         
     }
 
@@ -250,5 +255,12 @@ public class Shader {
         gl.glGetIntegerv(GL3.GL_CURRENT_PROGRAM, ids, 0);
         int loc = gl.glGetUniformLocation(ids[0], var);
         gl.glUniform1f(loc, f);
+    }
+    
+    public static void setInt(GL3 gl, String var, int f) {
+        int ids[] = new int[1];
+        gl.glGetIntegerv(GL3.GL_CURRENT_PROGRAM, ids, 0);
+        int loc = gl.glGetUniformLocation(ids[0], var);
+        gl.glUniform1i(loc, f);
     }
 }

@@ -25,7 +25,9 @@ public class Avatar {
 		this.position = camera.getGlobalPosition();
 		isShowing = false;
 		try {
-			this.mesh = new TriangleMesh("res/models/bunny_res4.ply", true);
+			this.mesh = new TriangleMesh
+					("res/models/bunny_res4.ply", true);
+			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

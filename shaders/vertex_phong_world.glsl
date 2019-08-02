@@ -10,6 +10,7 @@ in vec3 position;
 // Incoming normal
 in vec3 normal;
 in vec2 texCoord;
+//in float diffuseCoeff;
 
 uniform mat4 model_matrix;
 
@@ -21,6 +22,7 @@ out vec4 viewPosition;
 out vec3 m;
 out vec2 texCoordFrag;
 out vec4 globalPosition;
+//out float diffuseCoeff;
 
 void main() {
 	// The global position is in homogenous coordinates
@@ -31,7 +33,7 @@ void main() {
 
     // The position in CVV coordinates
     gl_Position = proj_matrix * viewPosition;
-
+    globalPosition = gl_Position;
     // Compute the normal in view coordinates
     m = normalize(view_matrix*model_matrix * vec4(normal, 0)).xyz;
     

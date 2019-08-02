@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import com.jogamp.opengl.GL;
-
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.opengl.GL3;
-
 
 import unsw.graphics.Application3D;
 import unsw.graphics.CoordFrame3D;
@@ -38,6 +36,7 @@ public class World extends Application3D implements KeyListener{
         this.camera = new unsw.graphics.world.Camera(terrain);
         this.avatar = new Avatar(camera);
         viewAvatar = false;
+        this.terrain.setCamera(camera);
     }
    
     /**
@@ -62,22 +61,19 @@ public class World extends Application3D implements KeyListener{
 			terrain.initGL(gl);
 		}
 
+		//computing the frame for the view matrix
+
 		cameraFrame = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D());
-		cameraFrame.draw(gl);
 		avatarFrame = CoordFrame3D.identity().translate(camera.getGlobalPosition()).translate(0, -1, 0).rotateY(camera.getGlobalRotation());
-		
-//		avatarFrame = CoordFrame3D.identity().rotateY(camera.getGlobalRotation()).translate(new Point3D(0, 0, 0.5f).minus(camera.getGlobalPosition()).asPoint3D());
-		avatarFrame.draw(gl);
-//		avatarFrame = cameraFrame.translate(1, 0, 1);
+
 		if (viewAvatar) {
-//			avatarFrame = cameraFrame.translate(0, 0, 1);
 			viewMatrix = CoordFrame3D.identity().translate(0, 0, -2).rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
 		}else {
 			viewMatrix = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
-//			avatarFrame	= cameraFrame;
 					}
 		
 		Shader.setViewMatrix(gl, viewMatrix);
+		
 		terrain.draw(gl, CoordFrame3D.identity());
 		avatar.draw(gl, avatarFrame.rotateY(-90).scale(3, 3, 3));
 	}
@@ -122,33 +118,36 @@ public class World extends Application3D implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
-		if(code == KeyEvent.VK_UP){
+		switch(code) {
+		case KeyEvent.VK_UP:
 			camera.up(terrain);
-		}
-		if(code == KeyEvent.VK_DOWN){
+			break;
+		case KeyEvent.VK_DOWN:
 			camera.down(terrain);
-		}
-		if(code == KeyEvent.VK_LEFT){
+			break;
+		case KeyEvent.VK_LEFT:
 			camera.left();
-		}
-		if(code == KeyEvent.VK_RIGHT){
+			break;
+		case KeyEvent.VK_RIGHT:
 			camera.right();
+			break;
+		case KeyEvent.VK_N:
+			terrain.nightMode();
+			break;
+		case KeyEvent.VK_D:
+			terrain.dayMode();
+			break;
+		default:
+			break;
 		}
+
 		if(code == KeyEvent.VK_SPACE) {
 			if(viewAvatar) {
-//				camera.viewAvatar();
-//				cameraFrame = this.cameraFrame.translate(-0.5f*(float)Math.sin(Math.toRadians(camera.getGlobalRotation())), 0f, -0.5f*(float)Math.cos(Math.toRadians(camera.getGlobalRotation())));
-//				avatar.changeView();
 				viewAvatar = false;
 			}else {
-//				camera.viewAvatar();
-//				cameraFrame = this.cameraFrame.translate(0.5f*(float)Math.sin(Math.toRadians(camera.getGlobalRotation())), 0f, 0.5f*(float)Math.cos(Math.toRadians(camera.getGlobalRotation())));
-//				avatar.changeView();
 				viewAvatar = true;
-			}
-			
+			}		
 		}
-		
 	}
 }
 
