@@ -30,6 +30,12 @@ public class Tree extends BaseWorld {
 		}
     }
     
+	@Override
+	public void initGL(GL3 gl) {
+		// TODO Auto-generated method stub
+		triangleMesh.init(gl);
+	}
+    
     public Point3D getPosition() {
         return position;
     }
@@ -38,7 +44,7 @@ public class Tree extends BaseWorld {
     public void draw(GL3 gl, CoordFrame3D frame) {
 //	    	CoordFrame3D treeFrame = frame.translate(new Point3D(0, 0, 0).minus(position).asPoint3D());
 	    	CoordFrame3D treeFrame = frame.translate(position)
-	    			.translate(0, 1.1f, 0)
+	    			.translate(0, 1f, 0)
 	    			.scale(scaleFactor, scaleFactor, scaleFactor);
 //	   
 	    	
@@ -47,10 +53,6 @@ public class Tree extends BaseWorld {
 	    	triangleMesh.draw(gl, treeFrame);
     }
 
-	@Override
-	public void initGL(GL3 gl) {
-		// TODO Auto-generated method stub
-		triangleMesh.init(gl);
-	}
+
 
 }
