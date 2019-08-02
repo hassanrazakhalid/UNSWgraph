@@ -51,7 +51,6 @@ public class World extends Application3D implements KeyListener{
 		super.display(gl);
 		
 		if(!afterInitFirstTime) {
-			afterInitFirstTime = true;
 			terrain.initGL(gl);
 		}
 		//computing the frame for the view matrix
@@ -59,6 +58,7 @@ public class World extends Application3D implements KeyListener{
 		
 		Shader.setViewMatrix(gl, cameraFrame.getMatrix());
 		terrain.draw(gl, CoordFrame3D.identity());
+		afterInitFirstTime = true;
 	}
 
 	@Override

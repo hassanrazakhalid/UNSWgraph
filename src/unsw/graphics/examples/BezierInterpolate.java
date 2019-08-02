@@ -36,7 +36,7 @@ public class BezierInterpolate extends Application2D implements KeyListener {
             new Point2D(-1,1.5f),
             new Point2D(0, 2.5f)  
         };
-        segments = 10;
+        segments = 20;
     }
 	
     public static void main(String[] args) {

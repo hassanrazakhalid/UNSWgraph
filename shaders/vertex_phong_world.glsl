@@ -22,20 +22,19 @@ out vec4 viewPosition;
 out vec3 m;
 out vec2 texCoordFrag;
 out vec4 globalPosition;
+out vec3 FragPos;
 //out float diffuseCoeff;
 
 void main() {
 	// The global position is in homogenous coordinates
-    globalPosition = model_matrix * vec4(position, 1);
+	FragPos = vec3(model_matrix * vec4(position, 1));
 
     // The position in camera coordinates
-    viewPosition = view_matrix * globalPosition;
+    viewPosition = view_matrix * vec4(FragPos, 1);
 
     // The position in CVV coordinates
     gl_Position = proj_matrix * viewPosition;
-    globalPosition = gl_Position;
     // Compute the normal in view coordinates
-    m = normalize(view_matrix*model_matrix * vec4(normal, 0)).xyz;
-    
+    m = normalize(view_matrix*model_matrix * vec4(normal, 0)).xyz;    
     texCoordFrag = texCoord;
 }
