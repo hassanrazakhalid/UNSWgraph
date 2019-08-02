@@ -61,19 +61,19 @@ public class World extends Application3D implements KeyListener{
 			terrain.initGL(gl);
 		}
 
-		//computing the frame for the view matrix
-
+		//computing the frame for the view matrix and avatar
+		
 		cameraFrame = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D());
 		avatarFrame = CoordFrame3D.identity().translate(camera.getGlobalPosition()).translate(0, -1, 0).rotateY(camera.getGlobalRotation());
 
+		//view matrix according to 1st og 3rd person view
 		if (viewAvatar) {
-			viewMatrix = CoordFrame3D.identity().translate(0, 0, -2).rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
+			viewMatrix = CoordFrame3D.identity().translate(0, 0, -1.7f).rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
 		}else {
-			viewMatrix = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
+			viewMatrix = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0.5f, 0, 0.5f).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
 					}
 		
 		Shader.setViewMatrix(gl, viewMatrix);
-		
 		terrain.draw(gl, CoordFrame3D.identity());
 		avatar.draw(gl, avatarFrame.rotateY(-90).scale(3, 3, 3));
 	}

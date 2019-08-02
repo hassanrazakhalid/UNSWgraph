@@ -27,14 +27,14 @@ public class Camera {
 	//moves camera forward by translating its position according to the global rotation,
 	//and the altitude at that point
 	public void up(Terrain terrain) {
-		globalPosition = this.globalPosition.translate(-0.5f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, -0.5f*(float)Math.cos(Math.toRadians(globalRotation)));
+		globalPosition = this.globalPosition.translate(-0.4f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, -0.4f*(float)Math.cos(Math.toRadians(globalRotation)));
 		setGlobalPosition(globalPosition.getX(), globalPosition.getZ());
 		
 		System.out.println("Moved to this altitude: " + terrain.altitude(globalPosition.getX(), globalPosition.getZ()));
 	}
 	//moves camera backwards by translating its position according to the global rotation
 	public void down(Terrain terrain) {
-		globalPosition = this.globalPosition.translate(0.5f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, 0.5f*(float)Math.cos(Math.toRadians(globalRotation)));
+		globalPosition = this.globalPosition.translate(0.4f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, 0.4f*(float)Math.cos(Math.toRadians(globalRotation)));
 		setGlobalPosition(globalPosition.getX(), globalPosition.getZ());
 	}
 	
