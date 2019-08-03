@@ -74,11 +74,9 @@ public class World extends Application3D implements KeyListener{
 		
 		Shader.setViewMatrix(gl, viewMatrix);
 		terrain.draw(gl, CoordFrame3D.identity());
-<<<<<<< HEAD
 		afterInitFirstTime = true;
-=======
 		avatar.draw(gl, avatarFrame.rotateY(-90).scale(3, 3, 3));
->>>>>>> e0d6797c71a3ca9d5075b635d75e16b1b82a7fb5
+
 	}
 
 	@Override
