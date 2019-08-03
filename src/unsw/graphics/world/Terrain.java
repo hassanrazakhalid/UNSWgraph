@@ -233,9 +233,11 @@ public class Terrain extends BaseWorld {
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
 		
-		
 //		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
+
+		Shader.setPenColor(gl, Color.black);
+		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
 		Shader.setInt(gl, "isDay", isDay);
@@ -376,9 +378,22 @@ public class Terrain extends BaseWorld {
 				    	  	Point3D r2 = p3;
 				    	   	Point3D r3 = p4;
 				    	   	
-				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
-				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+				    	   	System.out.println("Point R1: " + r1.getX() + r1.getZ());
+				    	   	System.out.println("Point R2: " + r2.getX() + r2.getZ());
+				    	   	System.out.println("Point R3: " + r3.getX() + r3.getZ());
+				    	   	
+				    	   	System.out.println("Teller, Ledd 1 = " + (r2.getZ()-r3.getZ())*(x-r3.getX()));
+				    	   	System.out.println("Teller, Ledd 2 = " + (r3.getX()-r2.getX())*(z-r3.getZ()));
+				    	   	System.out.println("Nevner, Ledd 1 = " + (r2.getZ()-r3.getZ())*(r1.getX()-r3.getX()));
+				    	   	System.out.println("Teller, Ledd 2 = " + (r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
+				    	   	
+				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/((r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
+				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/((r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
 				    	   	float L3 = 1 - L1 - L2;
+				    	   	
+				    	   	System.out.println("L1 = " + L1);
+				    	   	System.out.println("L2 = " + L2);
+				    	   	System.out.println("L3 = " + L3);
 				    	   	
 				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
 			    	   	//upper triangle of the square
@@ -386,6 +401,7 @@ public class Terrain extends BaseWorld {
 				    	   	Point3D r1 = p1;
 				    	   	Point3D r2 = p4;
 				    	   	Point3D r3 = p2;
+				    	   	
 				    	   	
 				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
 				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());

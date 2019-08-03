@@ -23,13 +23,19 @@ public class World extends Application3D implements KeyListener{
 
     private Terrain terrain;
     private unsw.graphics.world.Camera camera;
+    private Avatar avatar;
+    private boolean viewAvatar;
+    private Matrix4 viewMatrix;
     private boolean afterInitFirstTime = false;
     CoordFrame3D cameraFrame = new CoordFrame3D(Matrix4.identity());
+    CoordFrame3D avatarFrame = new CoordFrame3D(Matrix4.identity());
     
     public World(Terrain terrain) {
     	super("Assignment 2", 800, 600);
         this.terrain = terrain;
         this.camera = new unsw.graphics.world.Camera(terrain);
+        this.avatar = new Avatar(camera);
+        viewAvatar = false;
         this.terrain.setCamera(camera);
     }
    
@@ -53,12 +59,26 @@ public class World extends Application3D implements KeyListener{
 		if(!afterInitFirstTime) {
 			terrain.initGL(gl);
 		}
-		//computing the frame for the view matrix
-		cameraFrame = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D());
+
+		//computing the frame for the view matrix and avatar
 		
-		Shader.setViewMatrix(gl, cameraFrame.getMatrix());
+		cameraFrame = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D());
+		avatarFrame = CoordFrame3D.identity().translate(camera.getGlobalPosition()).translate(0, -1, 0).rotateY(camera.getGlobalRotation());
+
+		//view matrix according to 1st og 3rd person view
+		if (viewAvatar) {
+			viewMatrix = CoordFrame3D.identity().translate(0, 0, -1.7f).rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
+		}else {
+			viewMatrix = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0.5f, 0, 0.5f).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
+					}
+		
+		Shader.setViewMatrix(gl, viewMatrix);
 		terrain.draw(gl, CoordFrame3D.identity());
+<<<<<<< HEAD
 		afterInitFirstTime = true;
+=======
+		avatar.draw(gl, avatarFrame.rotateY(-90).scale(3, 3, 3));
+>>>>>>> e0d6797c71a3ca9d5075b635d75e16b1b82a7fb5
 	}
 
 	@Override
@@ -69,6 +89,7 @@ public class World extends Application3D implements KeyListener{
 	@Override
 	public void init(GL3 gl) {
 		super.init(gl);		
+		
 		shader = new Shader(gl, "shaders/vertex_phong_world.glsl",
                 "shaders/fragment_phong_world.glsl");
         shader.use(gl);
@@ -81,6 +102,8 @@ public class World extends Application3D implements KeyListener{
         // Cull back faces
         gl.glEnable(GL.GL_CULL_FACE);
 		getWindow().addKeyListener(this);
+		
+		avatar.init(gl);
 	}
 
 	@Override
@@ -120,7 +143,18 @@ public class World extends Application3D implements KeyListener{
 		default:
 			break;
 		}
+<<<<<<< HEAD
 		terrain.keyPressed(e);
+=======
+
+		if(code == KeyEvent.VK_SPACE) {
+			if(viewAvatar) {
+				viewAvatar = false;
+			}else {
+				viewAvatar = true;
+			}		
+		}
+>>>>>>> e0d6797c71a3ca9d5075b635d75e16b1b82a7fb5
 	}
 	
 }

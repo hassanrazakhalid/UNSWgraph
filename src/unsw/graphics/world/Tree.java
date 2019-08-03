@@ -30,6 +30,12 @@ public class Tree extends BaseWorld {
 		}
     }
     
+	@Override
+	public void initGL(GL3 gl) {
+		// TODO Auto-generated method stub
+		triangleMesh.init(gl);
+	}
+    
     public Point3D getPosition() {
         return position;
     }
@@ -44,10 +50,5 @@ public class Tree extends BaseWorld {
 	    	triangleMesh.draw(gl, treeFrame);
     }
 
-	@Override
-	public void initGL(GL3 gl) {
-		// TODO Auto-generated method stub
-		triangleMesh.init(gl);
-	}
 
 }
