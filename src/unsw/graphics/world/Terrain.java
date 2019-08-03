@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
@@ -20,7 +21,6 @@ import unsw.graphics.Vector4;
 import unsw.graphics.geometry.Line2D;
 import unsw.graphics.geometry.Line3D;
 import unsw.graphics.geometry.LineStrip2D;
-import unsw.graphics.geometry.LineStrip3D;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleMesh;
@@ -51,7 +51,7 @@ public class Terrain extends BaseWorld {
     private float specularCoefficient;
     private float phongExponent;
     private unsw.graphics.world.Camera camera;
-    private int isDay = 0;
+    private int isDay = 1;
     private boolean afterInitFirstTime = false;
     
 	//Texture vars
@@ -85,19 +85,34 @@ public class Terrain extends BaseWorld {
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		
 		int textureIndex = 0 ;
-		quadTexCoords = new Point2DBuffer((depth -1) * (width -1)  * 1);
+		int totalVerices = (depth) * (width);
+		quadTexCoords = new Point2DBuffer(totalVerices  * 6);
 		//creating a vertex for all points in the grid
 		for(int z = 0; z < depth -1; z++) {
 			for(int x = 0; x < width -1; x++) {
 				Point3D p = convertToPoint3d(x, z);
 				vertices.add(p);
 				
-				quadTexCoords.put(textureIndex++, x, z); // lower left
-//				quadTexCoords.put(textureIndex++, 0f, 1f);
-//				quadTexCoords.put(textureIndex++, 1f, 0f);
-//				quadTexCoords.put(textureIndex++, 1f, 1f);
+//				quadTexCoords.put(textureIndex++, 0.5f, 0.5f);
+//				quadTexCoords.put(textureIndex++, 0f, 0f);
+//		        quadTexCoords.put(textureIndex++, 1f, 1f);
+//		        
+//		        quadTexCoords.put(textureIndex++, 0.5f, 1f);
+//		        quadTexCoords.put(textureIndex++, 1f, 1f);
+//		        quadTexCoords.put(textureIndex++, 1f, 0f);
 			}
 		}
+		
+		for(int z = 0; z < totalVerices; z+=1) {
+			
+			quadTexCoords.put(textureIndex++, 0, 0);
+			quadTexCoords.put(textureIndex++, 1f, 0);
+			quadTexCoords.put(textureIndex++, 0.5f, 0);			
+//			quadTexCoords.put(textureIndex++, 1, 0);
+//			quadTexCoords.put(textureIndex++, 0.5f, 0f);
+//			quadTexCoords.put(textureIndex++, 1, 1);
+		}
+		
 		//adding the indicies of the vertices in the order the triangles in the mesh is drawn 
 		for(int z = 0; z < depth -2; z++) {
 			for(int x = 0; x < width -2; x++) {
@@ -136,8 +151,6 @@ public class Terrain extends BaseWorld {
 				road.initGL(gl);
 			}
 			road.draw(gl, frame);
-//	    	System.out.println();
-//	    	tangents.draw(gl);
 		}
 	}
 
@@ -208,14 +221,14 @@ public class Terrain extends BaseWorld {
 		Shader.setFloat(gl, "phongExp", phongExponent);
 		
 		
-		int[] names = new int[1];
-		// Copy across the buffer for the texture coordinates
-		gl.glGenBuffers(1, names, 0);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER,
-                quadTexCoords.capacity * 2 * Float.BYTES,
-                quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
-        gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
+//		int[] names = new int[1];
+//		// Copy across the buffer for the texture coordinates
+//		gl.glGenBuffers(1, names, 0);
+//        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
+//        gl.glBufferData(GL.GL_ARRAY_BUFFER,
+//                quadTexCoords.capacity() * 2 * Float.BYTES,
+//                quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
+//        gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 	}	
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
@@ -229,6 +242,7 @@ public class Terrain extends BaseWorld {
 //		gl.glClearColor(0f, 0f, 0f, 1.0f);
 //		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		Shader.setPenColor(gl, Color.white);
+		copyTextureData(gl);
 		fan.draw(gl, frame);
 		drawTrees(gl, frame);
 //		gl.glDisable(GL2.GL_TEXTURE_2D);
@@ -265,6 +279,23 @@ public class Terrain extends BaseWorld {
 
 	public Vector3 getSunlight() {
 		return sunlight;
+	}
+	
+	private void copyTextureData(GL3 gl) {
+		int[] names = new int[1];
+		// Copy across the buffer for the texture coordinates
+		gl.glGenBuffers(1, names, 0);
+	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
+	    gl.glBufferData(GL.GL_ARRAY_BUFFER,
+	            quadTexCoords.capacity() * 2 * Float.BYTES,
+	            quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
+	    gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
+	}
+	
+	public void keyPressed(KeyEvent e) {
+		for (Road road : roads) {
+			road.keyPressed(e);
+		}
 	}
 	
 	/**
@@ -311,6 +342,7 @@ public class Terrain extends BaseWorld {
 	 * @return
 	 */
 	public float altitude(float x, float z) {
+		
 		float a = 0;
 		//checking if point is integer hence on the grid
 		if(x==Math.round(x) && z==Math.round(z)) {

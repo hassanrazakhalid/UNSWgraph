@@ -120,7 +120,9 @@ public class World extends Application3D implements KeyListener{
 		default:
 			break;
 		}
+		terrain.keyPressed(e);
 	}
+	
 }
 
 	
