@@ -10,12 +10,10 @@ public class Camera {
 	private Terrain terrain;
 	private Point3D globalPosition;
 	private float globalRotation;
-<<<<<<< HEAD
 	private float speed = 0.2f; 
 
-=======
 	private boolean viewAvatar; 
->>>>>>> e0d6797c71a3ca9d5075b635d75e16b1b82a7fb5
+
 
 	public Camera(Terrain terrain) {
 		globalPosition = new Point3D(0, 1f, 0);
@@ -35,24 +33,19 @@ public class Camera {
 	//moves camera forward by translating its position according to the global rotation,
 	//and the altitude at that point
 	public void up(Terrain terrain) {
-<<<<<<< HEAD
 //		System.out.println(globalPosition.toString());
 		globalPosition = this.globalPosition.translate(-speed*(float)Math.sin(Math.toRadians(globalRotation)), 0f, -speed*(float)Math.cos(Math.toRadians(globalRotation)));
-=======
 		globalPosition = this.globalPosition.translate(-0.4f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, -0.4f*(float)Math.cos(Math.toRadians(globalRotation)));
->>>>>>> e0d6797c71a3ca9d5075b635d75e16b1b82a7fb5
 		setGlobalPosition(globalPosition.getX(), globalPosition.getZ());
 		
 		System.out.println("Moved to this altitude: " + terrain.altitude(globalPosition.getX(), globalPosition.getZ()));
 	}
 	//moves camera backwards by translating its position according to the global rotation
 	public void down(Terrain terrain) {
-<<<<<<< HEAD
+
 //		System.out.println(globalPosition.toString());
 		globalPosition = this.globalPosition.translate(speed*(float)Math.sin(Math.toRadians(globalRotation)), 0f, speed*(float)Math.cos(Math.toRadians(globalRotation)));
-=======
 		globalPosition = this.globalPosition.translate(0.4f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, 0.4f*(float)Math.cos(Math.toRadians(globalRotation)));
->>>>>>> e0d6797c71a3ca9d5075b635d75e16b1b82a7fb5
 		setGlobalPosition(globalPosition.getX(), globalPosition.getZ());
 	}
 	
