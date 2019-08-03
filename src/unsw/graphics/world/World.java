@@ -143,10 +143,8 @@ public class World extends Application3D implements KeyListener{
 		default:
 			break;
 		}
-<<<<<<< HEAD
-		terrain.keyPressed(e);
-=======
 
+		terrain.keyPressed(e);
 		if(code == KeyEvent.VK_SPACE) {
 			if(viewAvatar) {
 				viewAvatar = false;
@@ -154,7 +152,6 @@ public class World extends Application3D implements KeyListener{
 				viewAvatar = true;
 			}		
 		}
->>>>>>> e0d6797c71a3ca9d5075b635d75e16b1b82a7fb5
 	}
 	
 }
