@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
@@ -21,6 +20,7 @@ import unsw.graphics.Vector4;
 import unsw.graphics.geometry.Line2D;
 import unsw.graphics.geometry.Line3D;
 import unsw.graphics.geometry.LineStrip2D;
+import unsw.graphics.geometry.LineStrip3D;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleMesh;
@@ -51,7 +51,7 @@ public class Terrain extends BaseWorld {
     private float specularCoefficient;
     private float phongExponent;
     private unsw.graphics.world.Camera camera;
-    private int isDay = 1;
+    private int isDay = 0;
     private boolean afterInitFirstTime = false;
     
 	//Texture vars
@@ -85,32 +85,26 @@ public class Terrain extends BaseWorld {
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		
 		int textureIndex = 0 ;
-		int totalVerices = (depth) * (width);
-		quadTexCoords = new Point2DBuffer(totalVerices  * 6);
+		quadTexCoords = new Point2DBuffer((depth -1) * (width -1)  * 4);
 		//creating a vertex for all points in the grid
 		for(int z = 0; z < depth -1; z++) {
 			for(int x = 0; x < width -1; x++) {
 				Point3D p = convertToPoint3d(x, z);
 				vertices.add(p);
 				
-//				quadTexCoords.put(textureIndex++, 0.5f, 0.5f);
-//				quadTexCoords.put(textureIndex++, 0f, 0f);
-//		        quadTexCoords.put(textureIndex++, 1f, 1f);
-//		        
-//		        quadTexCoords.put(textureIndex++, 0.5f, 1f);
-//		        quadTexCoords.put(textureIndex++, 1f, 1f);
-//		        quadTexCoords.put(textureIndex++, 1f, 0f);
+//				quadTexCoords.put(textureIndex++, x, z); // lower left
+//				quadTexCoords.put(textureIndex++, 0f, 1f);
+//				quadTexCoords.put(textureIndex++, 1f, 0f);
+//				quadTexCoords.put(textureIndex++, 1f, 1f);
 			}
 		}
 		
-		for(int z = 0; z < totalVerices; z+=1) {
+		for (float i = 0; i < vertices.size()-2; i+=2) {
+			quadTexCoords.put(textureIndex++, i, i);
+	        quadTexCoords.put(textureIndex++, i+1f, i);
+	        quadTexCoords.put(textureIndex++, i+1f, i+1f);
+	        quadTexCoords.put(textureIndex++, i, i+1f);
 			
-			quadTexCoords.put(textureIndex++, 0, 0);
-			quadTexCoords.put(textureIndex++, 1f, 0);
-			quadTexCoords.put(textureIndex++, 0.5f, 0);			
-//			quadTexCoords.put(textureIndex++, 1, 0);
-//			quadTexCoords.put(textureIndex++, 0.5f, 0f);
-//			quadTexCoords.put(textureIndex++, 1, 1);
 		}
 		
 		//adding the indicies of the vertices in the order the triangles in the mesh is drawn 
@@ -151,6 +145,8 @@ public class Terrain extends BaseWorld {
 				road.initGL(gl);
 			}
 			road.draw(gl, frame);
+//	    	System.out.println();
+//	    	tangents.draw(gl);
 		}
 	}
 
@@ -226,18 +222,16 @@ public class Terrain extends BaseWorld {
 //		gl.glGenBuffers(1, names, 0);
 //        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
 //        gl.glBufferData(GL.GL_ARRAY_BUFFER,
-//                quadTexCoords.capacity() * 2 * Float.BYTES,
+//                quadTexCoords.capacity * 2 * Float.BYTES,
 //                quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
 //        gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 	}	
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
 		
+		
 //		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
-
-		Shader.setPenColor(gl, Color.black);
-		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
 		Shader.setInt(gl, "isDay", isDay);
@@ -250,6 +244,16 @@ public class Terrain extends BaseWorld {
 //		gl.glDisable(GL2.GL_TEXTURE_2D);
 		drawRoads(gl, frame);
 		afterInitFirstTime = true;
+	}
+	
+	private void copyTextureData(GL3 gl) {
+		int[] names = new int[1];
+		// Copy across the buffer for the texture coordinates
+		gl.glGenBuffers(1, names, 0);
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
+		gl.glBufferData(GL.GL_ARRAY_BUFFER, quadTexCoords.capacity() * 2 * Float.BYTES, quadTexCoords.getBuffer(),
+				GL.GL_STATIC_DRAW);
+		gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 	}
 	
 //	private void updateDiffuseCoff(GL3 gl) {
@@ -281,23 +285,6 @@ public class Terrain extends BaseWorld {
 
 	public Vector3 getSunlight() {
 		return sunlight;
-	}
-	
-	private void copyTextureData(GL3 gl) {
-		int[] names = new int[1];
-		// Copy across the buffer for the texture coordinates
-		gl.glGenBuffers(1, names, 0);
-	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
-	    gl.glBufferData(GL.GL_ARRAY_BUFFER,
-	            quadTexCoords.capacity() * 2 * Float.BYTES,
-	            quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
-	    gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
-	}
-	
-	public void keyPressed(KeyEvent e) {
-		for (Road road : roads) {
-			road.keyPressed(e);
-		}
 	}
 	
 	/**
@@ -344,7 +331,6 @@ public class Terrain extends BaseWorld {
 	 * @return
 	 */
 	public float altitude(float x, float z) {
-		
 		float a = 0;
 		//checking if point is integer hence on the grid
 		if(x==Math.round(x) && z==Math.round(z)) {
@@ -378,22 +364,9 @@ public class Terrain extends BaseWorld {
 				    	  	Point3D r2 = p3;
 				    	   	Point3D r3 = p4;
 				    	   	
-				    	   	System.out.println("Point R1: " + r1.getX() + r1.getZ());
-				    	   	System.out.println("Point R2: " + r2.getX() + r2.getZ());
-				    	   	System.out.println("Point R3: " + r3.getX() + r3.getZ());
-				    	   	
-				    	   	System.out.println("Teller, Ledd 1 = " + (r2.getZ()-r3.getZ())*(x-r3.getX()));
-				    	   	System.out.println("Teller, Ledd 2 = " + (r3.getX()-r2.getX())*(z-r3.getZ()));
-				    	   	System.out.println("Nevner, Ledd 1 = " + (r2.getZ()-r3.getZ())*(r1.getX()-r3.getX()));
-				    	   	System.out.println("Teller, Ledd 2 = " + (r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
-				    	   	
-				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/((r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
-				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/((r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
+				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
 				    	   	float L3 = 1 - L1 - L2;
-				    	   	
-				    	   	System.out.println("L1 = " + L1);
-				    	   	System.out.println("L2 = " + L2);
-				    	   	System.out.println("L3 = " + L3);
 				    	   	
 				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
 			    	   	//upper triangle of the square
@@ -401,7 +374,6 @@ public class Terrain extends BaseWorld {
 				    	   	Point3D r1 = p1;
 				    	   	Point3D r2 = p4;
 				    	   	Point3D r3 = p2;
-				    	   	
 				    	   	
 				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
 				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());

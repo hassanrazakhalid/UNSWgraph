@@ -46,7 +46,7 @@ public class Road extends BaseWorld {
 	private String textureFileName = "res/textures/black-road-texture.png";
 	private String textureExt = "png";
 	Point2DBuffer quadTexCoords;
-	float global_y = 1.5f;
+	float global_y = 0.01f;//1.5f;
 
 	public Road(float width, List<Point2D> spine) {
 		this.width = width;
@@ -234,17 +234,19 @@ public class Road extends BaseWorld {
 			List<Integer> indces = new ArrayList<>();
 			for (int i = 0; i < pts.size() - 2; i += 2) {
 				indces.add(i + 1);
-				indces.add(i);
-				indces.add(i + 3);
-
-				quadTexCoords.put(textureIndex++, 1f, 0f);
-				quadTexCoords.put(textureIndex++, 0f, 1f);
-				quadTexCoords.put(textureIndex++, 1f, 0f);
-				quadTexCoords.put(textureIndex++, 1f, 1f);
-
 				indces.add(i + 3);
 				indces.add(i);
+				
+
+				quadTexCoords.put(textureIndex++, i+1f, i);
+				quadTexCoords.put(textureIndex++, i, i+1f);
+				quadTexCoords.put(textureIndex++, i+1f, i);
+				quadTexCoords.put(textureIndex++, i+1f, i+1f);
+
+				indces.add(i + 3);
 				indces.add(i + 2);
+				indces.add(i);
+				
 			}
 			roadMesh = new TriangleMesh(pts, indces, true);
 			roadMesh.init(gl);

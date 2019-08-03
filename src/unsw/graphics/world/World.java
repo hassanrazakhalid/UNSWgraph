@@ -142,7 +142,7 @@ public class World extends Application3D implements KeyListener{
 			break;
 		}
 
-		terrain.keyPressed(e);
+//		terrain.keyPressed(e);
 		if(code == KeyEvent.VK_SPACE) {
 			if(viewAvatar) {
 				viewAvatar = false;
