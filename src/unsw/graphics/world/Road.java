@@ -33,6 +33,7 @@ public class Road extends BaseWorld {
 	private List<Point2D> points;
 	private float width;
 	int segments;
+	Terrain terrain;
 	TriangleMesh roadMesh = null;
 	/**
 	 * Create a new road with the specified spine
@@ -46,12 +47,12 @@ public class Road extends BaseWorld {
 	private String textureFileName = "res/textures/black-road-texture.png";
 	private String textureExt = "png";
 	Point2DBuffer quadTexCoords;
-	float global_y = 0.01f;//1.5f;
+	float global_y = 1.01f;//1.5f;
 
 	public Road(float width, List<Point2D> spine) {
 		this.width = width;
 		this.points = spine;
-		segments = 10;
+		segments = 15;
 	}
 
 	/**
@@ -188,60 +189,84 @@ public class Road extends BaseWorld {
 		// TODO Auto-generated method stub
 
 	}
+	
+	private List<Point3D> processPointOnCourse(float t) {
+		Point2D tangent_pt1 = getNormal(t);
+		Point2D pt = point(t);
+		System.out.println(pt.toString());
+
+		Point2D normal_line_pt = tangent_pt1.translate(pt.getX(), pt.getY()).mulScaler((float) width() / 2);
+		pt = tangent_pt1.mulScaler(-1).translate(pt.getX(), pt.getY()).mulScaler((float) width() / 2);
+
+		float y = 1.01f;
+		if(!SharedData.instance.fileName.contains("test1")) {
+			y = terrain.altitude(normal_line_pt.getX(), normal_line_pt.getY());
+			y += 0.01;
+		}
+		Point3D normal_3d = new Point3D(normal_line_pt.getX(), y, normal_line_pt.getY());
+		
+		List<Point3D> res = new ArrayList<>();
+		res.add(new Point3D(pt.getX(), y, pt.getY()));
+		res.add(normal_3d);
+		return res;
+	}
 
 	@Override
 	public void draw(GL3 gl, CoordFrame3D frame) {
 		// TODO Auto-generated method stub
 
 		Vector4 orign = frame.getMatrix().getColumn(3);
+		
 		if (roadMesh == null) {
 			texture = new Texture(gl, textureFileName, textureExt, false);
 			List<Point3D> pts = new ArrayList<>();
 			float dt = 1.0f / segments;
-//			float global_y = orign.asPoint3D().getY();//1.5f;
+//			global_y = orign.asPoint3D().getY();//1.5f;
 //			global_y += 1.01f;
 			
+			
+//			System.out.println(getNormal(1));
 			for (int index = 0; index < segments; index++) {
 				float t = index * dt;
+				
+				System.out.println(t);
+//				Point2D tangent_pt1 = getNormal(t);
+//				Point2D pt = point(t);
+//				System.out.println(pt.toString());
+//
+//				Point2D normal_line_pt = tangent_pt1.translate(pt.getX(), pt.getY()).mulScaler((float) width() / 2);
+//				pt = tangent_pt1.mulScaler(-1).translate(pt.getX(), pt.getY()).mulScaler((float) width() / 2);
+//
+//				float y = terrain.altitude(normal_line_pt.getX(), normal_line_pt.getY());
+//				y += 0.01;
+//				Point3D normal_3d = new Point3D(normal_line_pt.getX(), y, normal_line_pt.getY());
 
-				Point2D tangent_pt1 = getNormal(t);
-				Point2D pt = point(t);
-
-				Point2D normal_line_pt = tangent_pt1.translate(pt.getX(), pt.getY()).mulScaler((float) width() / 2);
-
-				pt = tangent_pt1.mulScaler(-1).translate(pt.getX(), pt.getY()).mulScaler((float) width() / 2);
-
-				Point3D normal_3d = new Point3D(normal_line_pt.getX(), global_y, normal_line_pt.getY());
-
-				pts.add(new Point3D(pt.getX(), global_y, pt.getY()));
-				pts.add(normal_3d);
+				pts.addAll(processPointOnCourse(t));
+//				pts.add(new Point3D(pt.getX(), y, pt.getY()));
+//				pts.add(normal_3d);
 			}
-
+			pts.addAll(processPointOnCourse(0.99f));
+			System.out.println(pts.get(pts.size()-1));
+			System.out.println(pts.get(pts.size()-2));
+			
 			int textureIndex = 0;
 			quadTexCoords = new Point2DBuffer(pts.size() * 6);
-			// creating a vertex for all points in the grid
-			// for(int z = 0; z < depth -1; z++) {
-			// for(int x = 0; x < width -1; x++) {
-			// Point3D p = convertToPoint3d(x, z);
-			// vertices.add(p);
-			//
-			// quadTexCoords.put(textureIndex++, x, z); // lower left
-			// quadTexCoords.put(textureIndex++, 0f, 1f);
-			// quadTexCoords.put(textureIndex++, 1f, 0f);
-			// quadTexCoords.put(textureIndex++, 1f, 1f);
-			// }
-			// }
 			List<Integer> indces = new ArrayList<>();
 			for (int i = 0; i < pts.size() - 2; i += 2) {
 				indces.add(i + 1);
 				indces.add(i + 3);
 				indces.add(i);
 				
-
-				quadTexCoords.put(textureIndex++, i+1f, i);
-				quadTexCoords.put(textureIndex++, i, i+1f);
-				quadTexCoords.put(textureIndex++, i+1f, i);
-				quadTexCoords.put(textureIndex++, i+1f, i+1f);
+				
+				quadTexCoords.put(textureIndex++, i, i);
+		        quadTexCoords.put(textureIndex++, i+1f, i);
+		        quadTexCoords.put(textureIndex++, i+1f, i+1f);
+		        quadTexCoords.put(textureIndex++, i, i+1f);
+		        
+//				quadTexCoords.put(textureIndex++, i+1f, i);
+//				quadTexCoords.put(textureIndex++, i, i+1f);
+//				quadTexCoords.put(textureIndex++, i+1f, i);
+//				quadTexCoords.put(textureIndex++, i+1f, i+1f);
 
 				indces.add(i + 3);
 				indces.add(i + 2);

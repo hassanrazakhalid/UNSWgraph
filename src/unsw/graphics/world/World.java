@@ -46,6 +46,7 @@ public class World extends Application3D implements KeyListener{
      * @throws FileNotFoundException
      */
     public static void main(String[] args) throws FileNotFoundException {
+    	SharedData.instance.fileName = args[0];
         Terrain terrain = LevelIO.load(new File(args[0]));
         terrain.initTerrain();
         World world = new World(terrain);
@@ -98,7 +99,7 @@ public class World extends Application3D implements KeyListener{
         gl.glEnable(GL.GL_DEPTH_TEST);
         
         // Cull back faces
-        gl.glEnable(GL.GL_CULL_FACE);
+        gl.glDisable(GL.GL_CULL_FACE);
 		getWindow().addKeyListener(this);
 		
 		avatar.init(gl);

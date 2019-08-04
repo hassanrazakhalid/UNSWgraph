@@ -310,4 +310,8 @@ public class TriangleMesh {
     public void draw(GL3 gl) {
         draw(gl, CoordFrame3D.identity());
     }
+    
+    public int verticesSize() {
+    	return vertices.capacity();
+    }
 }

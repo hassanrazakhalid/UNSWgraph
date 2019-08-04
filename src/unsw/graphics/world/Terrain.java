@@ -85,10 +85,10 @@ public class Terrain extends BaseWorld {
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		
 		int textureIndex = 0 ;
-		quadTexCoords = new Point2DBuffer((depth -1) * (width -1)  * 4);
+		quadTexCoords = new Point2DBuffer((depth) * (width)  * 4);
 		//creating a vertex for all points in the grid
-		for(int z = 0; z < depth -1; z++) {
-			for(int x = 0; x < width -1; x++) {
+		for(int z = 0; z < depth; z++) {
+			for(int x = 0; x < width; x++) {
 				Point3D p = convertToPoint3d(x, z);
 				vertices.add(p);
 				
@@ -108,8 +108,8 @@ public class Terrain extends BaseWorld {
 		}
 		
 		//adding the indicies of the vertices in the order the triangles in the mesh is drawn 
-		for(int z = 0; z < depth -2; z++) {
-			for(int x = 0; x < width -2; x++) {
+		for(int z = 0; z < depth -1; z++) {
+			for(int x = 0; x < width -1; x++) {
 				Point3D p0 = convertToPoint3d(x, z);
 				Point3D p1 = convertToPoint3d(x, z+1);
 				Point3D p2 = convertToPoint3d(x+1, z+1);
@@ -141,6 +141,7 @@ public class Terrain extends BaseWorld {
 	
 	private void drawRoads(GL3 gl, CoordFrame3D frame) {
 		for (Road road : roads) {
+			road.terrain = this;
 			if(!afterInitFirstTime) {
 				road.initGL(gl);
 			}
@@ -230,18 +231,19 @@ public class Terrain extends BaseWorld {
 	public void draw(GL3 gl, CoordFrame3D frame) {
 		
 		
+		Shader.setInt(gl, "isDay", isDay);
 //		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
 		gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
-		Shader.setInt(gl, "isDay", isDay);
-//		gl.glClearColor(0f, 0f, 0f, 1.0f);
-//		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		
 		Shader.setPenColor(gl, Color.white);
 		copyTextureData(gl);
 		fan.draw(gl, frame);
+		//Drawing trees
 		drawTrees(gl, frame);
 //		gl.glDisable(GL2.GL_TEXTURE_2D);
+		//Drawing roads
 		drawRoads(gl, frame);
 		afterInitFirstTime = true;
 	}
