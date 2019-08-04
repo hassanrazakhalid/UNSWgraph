@@ -269,13 +269,16 @@ public class Terrain extends BaseWorld {
 
 			Shader.setPoint3D(gl, "sunVec", sunVec.asPoint3D());
 			sunRotation = sunRotation % 360;
-			gl.glClearColor( sunRotation/255.0f,  sunRotation/255.0f, sunRotation/255.0f, 1);
+			float normalizedRot = sunRotation/255.0f;
+			gl.glClearColor( normalizedRot,  normalizedRot, normalizedRot, 1);
 			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+			Shader.setFloat(gl, "light.ambientStrength", normalizedRot);//change ambient strength as well to have batter effect
 		}
 		else {
 			Shader.setPoint3D(gl, "sunVec", getSunlight().asPoint3D());
 		}
 
+		//For toggling DayNight mode
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
 
 		gl.glActiveTexture(GL.GL_TEXTURE0);
