@@ -26,7 +26,7 @@ public class Avatar {
 		isShowing = false;
 		try {
 			this.mesh = new TriangleMesh
-					("res/models/bunny_res4.ply", true);
+					("res/models/bunny_res4.ply", true, true);
 			
 			
 		} catch (IOException e) {
