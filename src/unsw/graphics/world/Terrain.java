@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
@@ -52,7 +53,10 @@ public class Terrain extends BaseWorld {
     private float phongExponent;
     private unsw.graphics.world.Camera camera;
     private int isDay = 0;
+    private int isAtteuationON = 0;
+    private float cutOffAngle = 12.5f;
     private boolean afterInitFirstTime = false;
+    float sunRotation = 0;
     
 	//Texture vars
 	Texture texture;
@@ -169,6 +173,15 @@ public class Terrain extends BaseWorld {
 		}
 		Shader.setPoint3D(gl, "sunVec", getSunlight().asPoint3D());
 
+//		CoordFrame3D sunFrame = CoordFrame3D.identity()
+//		.translate(getSunlight().asPoint3D())
+//		.rotateX(sunRotation++);
+//		
+//		sunRotation = sunRotation % 360;
+//		
+//		Shader.setPoint3D(gl, "sunVec", sunFrame.);
+		
+		
 		ambientIntensity = 0.1f;
 		lightIntensity = 1f;
 		ambientCoefficient = 0.4f;
@@ -181,7 +194,7 @@ public class Terrain extends BaseWorld {
 		Shader.setFloat(gl, "diffuseCoeff", diffuseCoefficient);
 		Shader.setInt(gl, "isDay", isDay);
 		
-		Shader.setFloat(gl, "light.cutOff", (float)Math.cos(Math.toRadians(12.5f)));
+		Shader.setFloat(gl, "light.cutOff", (float)Math.cos(Math.toRadians(cutOffAngle)));
 //		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		Shader.setPoint3D(gl, "light.position",  new Point3D(0, 0, 0f));
 //		Shader.setPoint3D(gl, "viewPos",  camera.getGlobalPosition());
@@ -232,6 +245,9 @@ public class Terrain extends BaseWorld {
 		
 		
 		Shader.setInt(gl, "isDay", isDay);
+		Shader.setInt(gl, "isAtteuationON", isAtteuationON);
+		Shader.setFloat(gl, "light.cutOff", (float)Math.cos(Math.toRadians(cutOffAngle)));
+		
 //		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
 		gl.glActiveTexture(GL.GL_TEXTURE0);
@@ -395,6 +411,21 @@ public class Terrain extends BaseWorld {
 		 	}
 		return a;
 	}
+	
+	public void keyPressed(KeyEvent e) {
+		int code = e.getKeyCode();
+		if(code  == KeyEvent.VK_1) {//to turn ON/ OFF attenuation
+			isAtteuationON = isAtteuationON == 0 ? 1 : 0;
+		}
+		//To show that attenuation works
+		else if(code  == KeyEvent.VK_2) {
+			cutOffAngle += 1;
+		}
+		else if(code  == KeyEvent.VK_3) {
+			cutOffAngle -= 1;
+		}
+	}
+
 
 	/**
 	 * Add a tree at the specified (x,z) point. The tree's y coordinate is

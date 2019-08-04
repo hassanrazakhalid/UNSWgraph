@@ -10,6 +10,7 @@ uniform mat4 view_matrix;
 uniform vec3 sunVec;
 
 uniform int isDay;
+uniform int isAtteuationON;
 
 struct Material {
     sampler2D diffuse;
@@ -128,12 +129,14 @@ void main()
 //	        vec3 specular = light.specular * spec * texture(material.specular, TexCoords).rgb;  
 ////	        
 ////	        // attenuation
-	        float distance = length(light.position - FragPos);
-	        float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
-////
-//	         ambient  *= attenuation; // remove attenuation from ambient, as otherwise at large distances the light would be darker inside than outside the spotlight due the ambient term in the else branche
-//	        diffuse   *= attenuation;
-//	        specular *= attenuation;   
+			if(isAtteuationON == 1) {
+		        float distance = length(viewPosition.xyz - light.position);
+		        float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+	////
+//		         ambient  *= attenuation; // remove attenuation from ambient, as otherwise at large distances the light would be darker inside than outside the spotlight due the ambient term in the else branche
+		        diffuse   *= attenuation;
+		        specular *= attenuation;
+			}
 	        vec3 intensity = ambient + diffuse + specular ;
 ////	        vec3 result = ambient + diffuse + specular;
 ////	        vec4 FragColor = vec4(result, 1.0);
