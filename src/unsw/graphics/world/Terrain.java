@@ -248,7 +248,21 @@ public class Terrain extends BaseWorld {
 		Shader.setInt(gl, "isAtteuationON", isAtteuationON);
 		Shader.setFloat(gl, "light.cutOff", (float)Math.cos(Math.toRadians(cutOffAngle)));
 		
-//		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
+		Vector4 sunVec = Matrix4.rotationX(sunRotation++)
+		.multiply(getSunlight().asPoint3D().asHomogenous());
+		
+		Shader.setPoint3D(gl, "sunVec", sunVec.asPoint3D());
+		sunRotation = sunRotation % 360;
+		
+//		gl.glClearColor(getBackground().getRed()/255f, getBackground().getGreen()/255f,
+//                getBackground().getBlue()/255f, getBackground().getAlpha()/255f);
+		
+		gl.glClearColor(0, 1,0, 1);
+
+        // Clear the screen with the defined clear color
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		
+		
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
 		gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
