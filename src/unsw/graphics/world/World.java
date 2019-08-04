@@ -65,7 +65,8 @@ public class World extends Application3D implements KeyListener{
 	
 		cameraFrame = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D());
 		avatarFrame = CoordFrame3D.identity().translate(camera.getGlobalPosition()).translate(0, -1, 0).rotateY(camera.getGlobalRotation());
-
+		
+		
 		//view matrix according to 1st og 3rd person view
 		if (viewAvatar) {
 			viewMatrix = CoordFrame3D.identity().translate(0, 0, -1.7f).rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D()).getMatrix();
@@ -133,6 +134,13 @@ public class World extends Application3D implements KeyListener{
 		case KeyEvent.VK_RIGHT:
 			camera.right();
 			break;
+		case KeyEvent.VK_J:
+			for (int i = 0; i < 10; i++) {
+				avatarFrame = avatarFrame.translate(0, 0.1f, 0);
+			}
+			for (int i = 0; i < 10; i++) {
+				avatarFrame = avatarFrame.translate(0, -0.1f, 0);
+			}
 		case KeyEvent.VK_N:
 			terrain.nightMode();
 			break;

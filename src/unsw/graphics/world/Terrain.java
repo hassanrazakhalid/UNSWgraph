@@ -242,7 +242,7 @@ public class Terrain extends BaseWorld {
 	}	
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
-		
+	
 		
 		Shader.setInt(gl, "isDay", isDay);
 		Shader.setInt(gl, "isAtteuationON", isAtteuationON);

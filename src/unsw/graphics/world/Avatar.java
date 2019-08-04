@@ -64,6 +64,12 @@ public class Avatar {
 		return isShowing;
 	}
 	
+	public void jump(CoordFrame3D frame) {
+		for(int i=0; i < 10; i++) {
+			
+		}
+	}
+	
 //	public void changeView() {
 //		if (isShowing) {
 ////			position = camera.getGlobalPosition();
