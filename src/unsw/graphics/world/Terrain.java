@@ -54,6 +54,8 @@ public class Terrain extends BaseWorld {
     private unsw.graphics.world.Camera camera;
     private int isDay = 1;
     private int isAtteuationON = 0;
+    private int fogEnabled = 1;
+    
     private float cutOffAngle = 12.5f;
     private boolean afterInitFirstTime = false;
     float sunRotation = 0;
@@ -256,15 +258,22 @@ public class Terrain extends BaseWorld {
 		Shader.setPoint3D(gl, "sunVec", sunVec.asPoint3D());
 		sunRotation = sunRotation % 360;
 		
+		Shader.setInt(gl, "isFogEnabled", fogEnabled);
 		Shader.setPoint3D(gl, "skyColor", skyColor);
-		
-		gl.glClearColor(skyColor.getX(), skyColor.getY(), skyColor.getZ(), 1);
-//		gl.glClearColor(sunRotation/255.0f, sunRotation/255.0f,sunRotation/255.0f, 1);
-        // Clear the screen with the defined clear color
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-		
+		//To Enable disable fog
+		if(fogEnabled == 1) {
+			
+			gl.glClearColor(skyColor.getX(), skyColor.getY(), skyColor.getZ(), 1);
+	        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		}
+		else {
+			gl.glClearColor(1, 1,1, 1);
+	        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		}
 		
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
+		
+		
 		gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
 		
@@ -429,15 +438,33 @@ public class Terrain extends BaseWorld {
 	
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
-		if(code  == KeyEvent.VK_1) {//to turn ON/ OFF attenuation
+//		if(code  == KeyEvent.VK_1) {//to turn ON/ OFF attenuation
+//			isAtteuationON = isAtteuationON == 0 ? 1 : 0;
+//		}
+//		//To show that attenuation works
+//		else if(code  == KeyEvent.VK_2) {
+//			cutOffAngle += 1;
+//		}
+//		else if(code  == KeyEvent.VK_3) {
+//			cutOffAngle -= 1;
+//		}
+		switch(code) {
+		
+		//to turn ON/ OFF attenuation
+		case KeyEvent.VK_1:
 			isAtteuationON = isAtteuationON == 0 ? 1 : 0;
-		}
-		//To show that attenuation works
-		else if(code  == KeyEvent.VK_2) {
+			break;
+		case KeyEvent.VK_2://To show that attenuation works
 			cutOffAngle += 1;
-		}
-		else if(code  == KeyEvent.VK_3) {
+			break;
+		case KeyEvent.VK_3:
 			cutOffAngle -= 1;
+			break;
+		case KeyEvent.VK_F:
+			fogEnabled = fogEnabled == 0 ? 1 : 0;
+			break;
+		default:
+			break;
 		}
 	}
 
