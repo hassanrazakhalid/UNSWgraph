@@ -52,7 +52,7 @@ public class Terrain extends BaseWorld {
     private float specularCoefficient;
     private float phongExponent;
     private unsw.graphics.world.Camera camera;
-    private int isDay = 0;
+    private int isDay = 1;
     private int isAtteuationON = 0;
     private float cutOffAngle = 12.5f;
     private boolean afterInitFirstTime = false;
@@ -63,6 +63,8 @@ public class Terrain extends BaseWorld {
     private String textureFileName = "res/textures/grass.bmp";
     private String textureExt = "bmp";
 
+    private Point3D skyColor = new Point3D(0.5f, 0.5f, 0.5f);
+    
 //    Point3DBuffer quadTexCoords;
     Point2DBuffer quadTexCoords;
     int segments;
@@ -254,10 +256,10 @@ public class Terrain extends BaseWorld {
 		Shader.setPoint3D(gl, "sunVec", sunVec.asPoint3D());
 		sunRotation = sunRotation % 360;
 		
-//		gl.glClearColor(getBackground().getRed()/255f, getBackground().getGreen()/255f,
-//                getBackground().getBlue()/255f, getBackground().getAlpha()/255f);
+		Shader.setPoint3D(gl, "skyColor", skyColor);
 		
-		gl.glClearColor(sunRotation/255.0f, sunRotation/255.0f,sunRotation/255.0f, 1);
+		gl.glClearColor(skyColor.getX(), skyColor.getY(), skyColor.getZ(), 1);
+//		gl.glClearColor(sunRotation/255.0f, sunRotation/255.0f,sunRotation/255.0f, 1);
         // Clear the screen with the defined clear color
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		
