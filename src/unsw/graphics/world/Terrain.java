@@ -26,6 +26,7 @@ import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleMesh;
 import unsw.graphics.scene.MathUtil;
+
 /**
  * COMMENT: Comment HeightMap
  *
@@ -40,36 +41,38 @@ public class Terrain extends BaseWorld {
 	private List<Road> roads;
 	private Vector3 sunlight;
 
-    TriangleMesh fan;
-    
-    private float ambientIntensity;
-//   private Point3D lightPos;
-    private float lightIntensity;
-    
-    // Properties of the material
-    private float ambientCoefficient;
-    private float diffuseCoefficient;
-    private float specularCoefficient;
-    private float phongExponent;
-    private unsw.graphics.world.Camera camera;
-    private int isDay = 1;
-    private int isAtteuationON = 0;
-    private int fogEnabled = 1;
-    
-    private float cutOffAngle = 12.5f;
-    private boolean afterInitFirstTime = false;
-    float sunRotation = 0;
-    
-	//Texture vars
-	Texture texture;
-    private String textureFileName = "res/textures/grass.bmp";
-    private String textureExt = "bmp";
+	TriangleMesh fan;
 
-    private Point3D skyColor = new Point3D(0.5f, 0.5f, 0.5f);
-    
-//    Point3DBuffer quadTexCoords;
-    Point2DBuffer quadTexCoords;
-    int segments;
+	private float ambientIntensity;
+	// private Point3D lightPos;
+	private float lightIntensity;
+
+	// Properties of the material
+	private float ambientCoefficient;
+	private float diffuseCoefficient;
+	private float specularCoefficient;
+	private float phongExponent;
+	private unsw.graphics.world.Camera camera;
+	private int isDay = 1;
+	private int isAtteuationON = 0;
+	private int fogEnabled = 0;
+	private int dayNightMode = 0;
+
+	private float cutOffAngle = 12.5f;
+	private boolean afterInitFirstTime = false;
+	float sunRotation = 0;
+
+	// Texture vars
+	Texture texture;
+	private String textureFileName = "res/textures/grass.bmp";
+	private String textureExt = "bmp";
+
+	private Point3D skyColor = new Point3D(0.5f, 0.5f, 0.5f);
+
+	// Point3DBuffer quadTexCoords;
+	Point2DBuffer quadTexCoords;
+	int segments;
+
 	/**
 	 * Create a new terrain
 	 *
@@ -91,43 +94,44 @@ public class Terrain extends BaseWorld {
 	public void initTerrain() {
 		ArrayList<Point3D> vertices = new ArrayList<>();
 		ArrayList<Integer> indices = new ArrayList<Integer>();
-		
-		int textureIndex = 0 ;
-		quadTexCoords = new Point2DBuffer((depth) * (width)  * 4);
-		//creating a vertex for all points in the grid
-		for(int z = 0; z < depth; z++) {
-			for(int x = 0; x < width; x++) {
+
+		int textureIndex = 0;
+		quadTexCoords = new Point2DBuffer((depth) * (width) * 4);
+		// creating a vertex for all points in the grid
+		for (int z = 0; z < depth; z++) {
+			for (int x = 0; x < width; x++) {
 				Point3D p = convertToPoint3d(x, z);
 				vertices.add(p);
-				
-//				quadTexCoords.put(textureIndex++, x, z); // lower left
-//				quadTexCoords.put(textureIndex++, 0f, 1f);
-//				quadTexCoords.put(textureIndex++, 1f, 0f);
-//				quadTexCoords.put(textureIndex++, 1f, 1f);
+
+				// quadTexCoords.put(textureIndex++, x, z); // lower left
+				// quadTexCoords.put(textureIndex++, 0f, 1f);
+				// quadTexCoords.put(textureIndex++, 1f, 0f);
+				// quadTexCoords.put(textureIndex++, 1f, 1f);
 			}
 		}
-		
-		for (float i = 0; i < vertices.size()-2; i+=2) {
+
+		for (float i = 0; i < vertices.size() - 2; i += 2) {
 			quadTexCoords.put(textureIndex++, i, i);
-	        quadTexCoords.put(textureIndex++, i+1f, i);
-	        quadTexCoords.put(textureIndex++, i+1f, i+1f);
-	        quadTexCoords.put(textureIndex++, i, i+1f);
-			
+			quadTexCoords.put(textureIndex++, i + 1f, i);
+			quadTexCoords.put(textureIndex++, i + 1f, i + 1f);
+			quadTexCoords.put(textureIndex++, i, i + 1f);
+
 		}
-		
-		//adding the indicies of the vertices in the order the triangles in the mesh is drawn 
-		for(int z = 0; z < depth -1; z++) {
-			for(int x = 0; x < width -1; x++) {
+
+		// adding the indicies of the vertices in the order the triangles in the mesh is
+		// drawn
+		for (int z = 0; z < depth - 1; z++) {
+			for (int x = 0; x < width - 1; x++) {
 				Point3D p0 = convertToPoint3d(x, z);
-				Point3D p1 = convertToPoint3d(x, z+1);
-				Point3D p2 = convertToPoint3d(x+1, z+1);
+				Point3D p1 = convertToPoint3d(x, z + 1);
+				Point3D p2 = convertToPoint3d(x + 1, z + 1);
 				indices.add(vertices.indexOf(p0));
 				indices.add(vertices.indexOf(p1));
 				indices.add(vertices.indexOf(p2));
-				
+
 				p0 = convertToPoint3d(x, z);
-				p1 = convertToPoint3d(x+1, z+1);
-				p2 = convertToPoint3d(x+1, z);
+				p1 = convertToPoint3d(x + 1, z + 1);
+				p2 = convertToPoint3d(x + 1, z);
 				indices.add(vertices.indexOf(p0));
 				indices.add(vertices.indexOf(p1));
 				indices.add(vertices.indexOf(p2));
@@ -136,7 +140,7 @@ public class Terrain extends BaseWorld {
 		fan = new TriangleMesh(vertices, indices, true);
 
 	}
-	
+
 	public void setCamera(unsw.graphics.world.Camera camera) {
 		this.camera = camera;
 	}
@@ -146,16 +150,16 @@ public class Terrain extends BaseWorld {
 			tree.draw(gl, frame);
 		}
 	}
-	
+
 	private void drawRoads(GL3 gl, CoordFrame3D frame) {
 		for (Road road : roads) {
 			road.terrain = this;
-			if(!afterInitFirstTime) {
+			if (!afterInitFirstTime) {
 				road.initGL(gl);
 			}
 			road.draw(gl, frame);
-//	    	System.out.println();
-//	    	tangents.draw(gl);
+			// System.out.println();
+			// tangents.draw(gl);
 		}
 	}
 
@@ -177,15 +181,14 @@ public class Terrain extends BaseWorld {
 		}
 		Shader.setPoint3D(gl, "sunVec", getSunlight().asPoint3D());
 
-//		CoordFrame3D sunFrame = CoordFrame3D.identity()
-//		.translate(getSunlight().asPoint3D())
-//		.rotateX(sunRotation++);
-//		
-//		sunRotation = sunRotation % 360;
-//		
-//		Shader.setPoint3D(gl, "sunVec", sunFrame.);
-		
-		
+		// CoordFrame3D sunFrame = CoordFrame3D.identity()
+		// .translate(getSunlight().asPoint3D())
+		// .rotateX(sunRotation++);
+		//
+		// sunRotation = sunRotation % 360;
+		//
+		// Shader.setPoint3D(gl, "sunVec", sunFrame.);
+
 		ambientIntensity = 0.1f;
 		lightIntensity = 1f;
 		ambientCoefficient = 0.4f;
@@ -197,97 +200,98 @@ public class Terrain extends BaseWorld {
 		Shader.setPoint3D(gl, "ambientIntensity", new Point3D(ambientIntensity, ambientIntensity, ambientIntensity));
 		Shader.setFloat(gl, "diffuseCoeff", diffuseCoefficient);
 		Shader.setInt(gl, "isDay", isDay);
-		
-		Shader.setFloat(gl, "light.cutOff", (float)Math.cos(Math.toRadians(cutOffAngle)));
-//		Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
-		Shader.setPoint3D(gl, "light.position",  new Point3D(0, 0, 0f));
-//		Shader.setPoint3D(gl, "viewPos",  camera.getGlobalPosition());
-		
+
+		Shader.setFloat(gl, "light.cutOff", (float) Math.cos(Math.toRadians(cutOffAngle)));
+		// Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
+		Shader.setPoint3D(gl, "light.position", new Point3D(0, 0, 0f));
+		// Shader.setPoint3D(gl, "viewPos", camera.getGlobalPosition());
+
 		Shader.setPoint3D(gl, "light.direction", new Point3D(0, 0, -1.0f));
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
 		Shader.setFloat(gl, "light.specularStrength", specularCoefficient);
-		
-		//Setting light properties
-		Shader.setPoint3D(gl,"light.diffuse", new Point3D(0.8f, 0.8f, 0.8f));
-		Shader.setPoint3D(gl,"light.specular", new Point3D(1.0f, 1.0f, 1.0f));
-		Shader.setFloat(gl,"light.constant", 1.0f);
-		Shader.setFloat(gl,"light.linear", 0.09f);
-		Shader.setFloat(gl,"light.quadratic", 0.032f);
-		
-		//setting material phys
-		Shader.setFloat(gl,"material.diffuse", 0);
-		Shader.setFloat(gl, "material.specular", 1);
-		Shader.setFloat(gl,"material.shininess", 32.0f);
-		
-		
 
-        // material properties
-		
-		
-		
+		// Setting light properties
+		Shader.setPoint3D(gl, "light.diffuse", new Point3D(0.8f, 0.8f, 0.8f));
+		Shader.setPoint3D(gl, "light.specular", new Point3D(1.0f, 1.0f, 1.0f));
 		Shader.setFloat(gl, "light.constant", 1.0f);
 		Shader.setFloat(gl, "light.linear", 0.09f);
 		Shader.setFloat(gl, "light.quadratic", 0.032f);
-		
-//		Shader.setPoint3D(gl, "diffuseCoeff", new Point3D(diffuseCoefficient, diffuseCoefficient, diffuseCoefficient));
-//		Shader.setPoint3D(gl, "specularCoeff",
-//				new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
+
+		// setting material phys
+		Shader.setFloat(gl, "material.diffuse", 0);
+		Shader.setFloat(gl, "material.specular", 1);
+		Shader.setFloat(gl, "material.shininess", 32.0f);
+
+		// material properties
+
+		Shader.setFloat(gl, "light.constant", 1.0f);
+		Shader.setFloat(gl, "light.linear", 0.09f);
+		Shader.setFloat(gl, "light.quadratic", 0.032f);
+
+		// Shader.setPoint3D(gl, "diffuseCoeff", new Point3D(diffuseCoefficient,
+		// diffuseCoefficient, diffuseCoefficient));
+		// Shader.setPoint3D(gl, "specularCoeff",
+		// new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
 		Shader.setFloat(gl, "phongExp", phongExponent);
-		
-		
-//		int[] names = new int[1];
-//		// Copy across the buffer for the texture coordinates
-//		gl.glGenBuffers(1, names, 0);
-//        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
-//        gl.glBufferData(GL.GL_ARRAY_BUFFER,
-//                quadTexCoords.capacity * 2 * Float.BYTES,
-//                quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
-//        gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
-	}	
+
+		// int[] names = new int[1];
+		// // Copy across the buffer for the texture coordinates
+		// gl.glGenBuffers(1, names, 0);
+		// gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
+		// gl.glBufferData(GL.GL_ARRAY_BUFFER,
+		// quadTexCoords.capacity * 2 * Float.BYTES,
+		// quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
+		// gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
+	}
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
-		
-		
+
 		Shader.setInt(gl, "isDay", isDay);
 		Shader.setInt(gl, "isAtteuationON", isAtteuationON);
-		Shader.setFloat(gl, "light.cutOff", (float)Math.cos(Math.toRadians(cutOffAngle)));
+		Shader.setFloat(gl, "light.cutOff", (float) Math.cos(Math.toRadians(cutOffAngle)));
+
 		
-		Vector4 sunVec = Matrix4.rotationX(sunRotation++)
-		.multiply(getSunlight().asPoint3D().asHomogenous());
-		
-		Shader.setPoint3D(gl, "sunVec", sunVec.asPoint3D());
-		sunRotation = sunRotation % 360;
-		
+
 		Shader.setInt(gl, "isFogEnabled", fogEnabled);
 		Shader.setPoint3D(gl, "skyColor", skyColor);
-		//To Enable disable fog
-		if(fogEnabled == 1) {
-			
+		// To Enable disable fog
+		if (fogEnabled == 1) {
+
 			gl.glClearColor(skyColor.getX(), skyColor.getY(), skyColor.getZ(), 1);
-	        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		} else {
+			gl.glClearColor(1, 1, 1, 1);
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		}
+		
+		if (dayNightMode == 1) {
+			Vector4 sunVec = Matrix4.rotationX(sunRotation++).multiply(getSunlight().asPoint3D().asHomogenous());
+
+			Shader.setPoint3D(gl, "sunVec", sunVec.asPoint3D());
+			sunRotation = sunRotation % 360;
+			gl.glClearColor( sunRotation/255.0f,  sunRotation/255.0f, sunRotation/255.0f, 1);
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		}
 		else {
-			gl.glClearColor(1, 1,1, 1);
-	        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+			Shader.setPoint3D(gl, "sunVec", getSunlight().asPoint3D());
 		}
-		
+
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
-		
-		
+
 		gl.glActiveTexture(GL.GL_TEXTURE0);
-        gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
-		
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
+
 		Shader.setPenColor(gl, Color.white);
 		copyTextureData(gl);
 		fan.draw(gl, frame);
-		//Drawing trees
+		// Drawing trees
 		drawTrees(gl, frame);
-//		gl.glDisable(GL2.GL_TEXTURE_2D);
-		//Drawing roads
+		// gl.glDisable(GL2.GL_TEXTURE_2D);
+		// Drawing roads
 		drawRoads(gl, frame);
 		afterInitFirstTime = true;
 	}
-	
+
 	private void copyTextureData(GL3 gl) {
 		int[] names = new int[1];
 		// Copy across the buffer for the texture coordinates
@@ -297,28 +301,28 @@ public class Terrain extends BaseWorld {
 				GL.GL_STATIC_DRAW);
 		gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 	}
-	
-//	private void updateDiffuseCoff(GL3 gl) {
-//		Shader.setFloat(gl, "diffuseCoeff", diffuseCoefficient);
-//	}
-	
+
+	// private void updateDiffuseCoff(GL3 gl) {
+	// Shader.setFloat(gl, "diffuseCoeff", diffuseCoefficient);
+	// }
+
 	public void nightMode() {
-		
+
 		isDay = 0;
 		ambientCoefficient = 0.4f;
 	}
-	
+
 	public void dayMode() {
-		
+
 		isDay = 1;
 		ambientCoefficient = 0.8f;
 	}
 
-	//method to convert a 2D point on the grid to 3D with its altitude included 
+	// method to convert a 2D point on the grid to 3D with its altitude included
 	private Point3D convertToPoint3d(int x, int z) {
 		float a = 0;
-		if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
-			a = 0;	
+		if (x < 0 || z < 0 || x > width - 1 || z > depth - 1) {
+			a = 0;
 		} else {
 			a = altitudes[x][z];
 		}
@@ -328,7 +332,7 @@ public class Terrain extends BaseWorld {
 	public Vector3 getSunlight() {
 		return sunlight;
 	}
-	
+
 	/**
 	 * Set the sunlight direction.
 	 * 
@@ -374,87 +378,95 @@ public class Terrain extends BaseWorld {
 	 */
 	public float altitude(float x, float z) {
 		float a = 0;
-		//checking if point is integer hence on the grid
-		if(x==Math.round(x) && z==Math.round(z)) {
-			if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
-				a = 0;	
+		// checking if point is integer hence on the grid
+		if (x == Math.round(x) && z == Math.round(z)) {
+			if (x < 0 || z < 0 || x > width - 1 || z > depth - 1) {
+				a = 0;
 			} else {
 				a = altitudes[(int) x][(int) z];
 			}
-		// if point not on grid, calculating the altitude
-		 } else {
-			 	// if point outside the terrain, altitude = 0
-				if (x < 0 || z < 0 || x > width -1 || z > depth -1) {
-					a = 0;	
-				} else { 
-					//finding inside which square on the grid the point is
-					int x0 = (int) Math.floor(x);
-					int z0 = (int) Math.floor(z);
-					float px = x - x0;
-					float pz = z - z0;
-				     
-				    int x1 = (int) Math.ceil(x);
-				    int z1 = (int) Math.ceil(z);
+			// if point not on grid, calculating the altitude
+		} else {
+			// if point outside the terrain, altitude = 0
+			if (x < 0 || z < 0 || x > width - 1 || z > depth - 1) {
+				a = 0;
+			} else {
+				// finding inside which square on the grid the point is
+				int x0 = (int) Math.floor(x);
+				int z0 = (int) Math.floor(z);
+				float px = x - x0;
+				float pz = z - z0;
 
-				    Point3D p1 = convertToPoint3d(x0, z0);
-				    Point3D p2 = convertToPoint3d(x1, z0);
-				    Point3D p3 = convertToPoint3d(x0, z1);
-				    Point3D p4 = convertToPoint3d(x1, z1);
-			        //lower triangle of the square
-				    if(px < pz) {
-				    		Point3D r1 = p1;
-				    	  	Point3D r2 = p3;
-				    	   	Point3D r3 = p4;
-				    	   	
-				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/((r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
-				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/((r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
-				    	   	float L3 = 1 - L1 - L2;
-				    	   	
-				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
-			    	   	//upper triangle of the square
-				    } else if (px > pz) {
-				    	   	Point3D r1 = p1;
-				    	   	Point3D r2 = p4;
-				    	   	Point3D r3 = p2;
-				    	   	
-				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
-				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
-				    	   	float L3 = 1 - L1 - L2;
-				    	   	
-				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
-				    //on the diagonal splitting the two triangles
-				    } else if (px == pz) {
-				    	   	Point3D r1 = p1;
-				    	   	Point3D r2 = p4; 	
-				    	   	
-				    	   	double t = r2.getX()-x;	
-				    	   	
-				    	   	a = (float) (t*r1.getY() + (1-t)*r2.getY());
-				    }  	
+				int x1 = (int) Math.ceil(x);
+				int z1 = (int) Math.ceil(z);
+
+				Point3D p1 = convertToPoint3d(x0, z0);
+				Point3D p2 = convertToPoint3d(x1, z0);
+				Point3D p3 = convertToPoint3d(x0, z1);
+				Point3D p4 = convertToPoint3d(x1, z1);
+				// lower triangle of the square
+				if (px < pz) {
+					Point3D r1 = p1;
+					Point3D r2 = p3;
+					Point3D r3 = p4;
+
+					float L1 = ((r2.getZ() - r3.getZ()) * (x - r3.getX()) + (r3.getX() - r2.getX()) * (z - r3.getZ()))
+							/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+									+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
+					float L2 = ((r3.getZ() - r1.getZ()) * (x - r3.getX()) + (r1.getX() - r3.getX()) * (z - r3.getZ()))
+							/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+									+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
+					float L3 = 1 - L1 - L2;
+
+					a = L1 * r1.getY() + L2 * r2.getY() + L3 * r3.getY();
+					// upper triangle of the square
+				} else if (px > pz) {
+					Point3D r1 = p1;
+					Point3D r2 = p4;
+					Point3D r3 = p2;
+
+					float L1 = ((r2.getZ() - r3.getZ()) * (x - r3.getX()) + (r3.getX() - r2.getX()) * (z - r3.getZ()))
+							/ (r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+							+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ());
+					float L2 = ((r3.getZ() - r1.getZ()) * (x - r3.getX()) + (r1.getX() - r3.getX()) * (z - r3.getZ()))
+							/ (r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+							+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ());
+					float L3 = 1 - L1 - L2;
+
+					a = L1 * r1.getY() + L2 * r2.getY() + L3 * r3.getY();
+					// on the diagonal splitting the two triangles
+				} else if (px == pz) {
+					Point3D r1 = p1;
+					Point3D r2 = p4;
+
+					double t = r2.getX() - x;
+
+					a = (float) (t * r1.getY() + (1 - t) * r2.getY());
 				}
-		 	}
+			}
+		}
 		return a;
 	}
-	
+
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
-//		if(code  == KeyEvent.VK_1) {//to turn ON/ OFF attenuation
-//			isAtteuationON = isAtteuationON == 0 ? 1 : 0;
-//		}
-//		//To show that attenuation works
-//		else if(code  == KeyEvent.VK_2) {
-//			cutOffAngle += 1;
-//		}
-//		else if(code  == KeyEvent.VK_3) {
-//			cutOffAngle -= 1;
-//		}
-		switch(code) {
-		
-		//to turn ON/ OFF attenuation
+		// if(code == KeyEvent.VK_1) {//to turn ON/ OFF attenuation
+		// isAtteuationON = isAtteuationON == 0 ? 1 : 0;
+		// }
+		// //To show that attenuation works
+		// else if(code == KeyEvent.VK_2) {
+		// cutOffAngle += 1;
+		// }
+		// else if(code == KeyEvent.VK_3) {
+		// cutOffAngle -= 1;
+		// }
+		switch (code) {
+
+		// to turn ON/ OFF attenuation
 		case KeyEvent.VK_1:
 			isAtteuationON = isAtteuationON == 0 ? 1 : 0;
 			break;
-		case KeyEvent.VK_2://To show that attenuation works
+		case KeyEvent.VK_2:// To show that attenuation works
 			cutOffAngle += 1;
 			break;
 		case KeyEvent.VK_3:
@@ -463,11 +475,13 @@ public class Terrain extends BaseWorld {
 		case KeyEvent.VK_F:
 			fogEnabled = fogEnabled == 0 ? 1 : 0;
 			break;
+		case KeyEvent.VK_R:
+			dayNightMode = dayNightMode == 0 ? 1 : 0;
+			break;
 		default:
 			break;
 		}
 	}
-
 
 	/**
 	 * Add a tree at the specified (x,z) point. The tree's y coordinate is
