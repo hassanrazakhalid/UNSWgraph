@@ -129,5 +129,11 @@ public class Point3D {
         //Compare however you want, ie
         return (p.getX() == this.getX() && p.getY() == this.getY() && p.getZ() == this.getZ());
     }
+    
+    @Override
+    public String toString() {
+    	// TODO Auto-generated method stub
+    	return new String(getX() + "," + getY() + "," + getZ());
+    }
 
 }

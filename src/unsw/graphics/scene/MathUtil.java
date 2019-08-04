@@ -1,5 +1,8 @@
 package unsw.graphics.scene;
 
+import unsw.graphics.Vector3;
+import unsw.graphics.geometry.Point2D;
+
 /**
  * A collection of useful math methods 
  *
@@ -27,6 +30,26 @@ public class MathUtil {
      */
     public static float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));
+    }
+    
+    public static Point2D normalize(Point2D pt) {
+    	
+//    	System.out.println("normalizing = " + pt.toString());
+    	float denum = (float) (Math.sqrt(pt.getX() * pt.getX() + pt.getY() * pt.getY() ));
+    	float x = pt.getX() / denum;
+    	float y = pt.getY() / denum;
+    	Point2D result = new Point2D(x, y);
+//    	System.out.println("result Is = " + result.toString());
+    	return result;
+    	
+    }
+    
+    public static Vector3 crossProduct(Vector3 a, Vector3 b) {
+    	
+    	float val1 = a.getY() * b.getZ() - a.getZ() * b.getY();
+    	float val2 = a.getZ() * b.getX() - a.getX() * b.getZ();
+    	float val3 = a.getX() * b.getY() - a.getY() * b.getX();
+    	return new Vector3(val1, val2, val3);
     }
        
 }

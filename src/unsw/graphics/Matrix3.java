@@ -179,7 +179,7 @@ public class Matrix3 {
         }
         return new Vector3(vec);
     }
-
+    
     /**
      * Get the values stored in this matrix in column-major order.
      * @return

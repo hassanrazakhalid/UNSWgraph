@@ -103,5 +103,19 @@ public class Point2D {
         //Compare however you want, ie
         return (p.getX() == this.getX() && p.getY() == this.getY());
     }
+    
+    public Point2D addScaler(float val) {
+    	return new Point2D(getX() + val, getY() + val);
+    }
+    
+    public Point2D mulScaler(float val) {
+    	return new Point2D(getX() * val, getY() * val);
+    }
+    
+    @Override
+    public String toString() {
+    	// TODO Auto-generated method stub
+    	return new String(getX() + "," + getY());
+    }
 
 }

@@ -57,7 +57,6 @@ public class World extends Application3D implements KeyListener{
 		super.display(gl);
 		
 		if(!afterInitFirstTime) {
-			afterInitFirstTime = true;
 			terrain.initGL(gl);
 		}
 
@@ -75,7 +74,9 @@ public class World extends Application3D implements KeyListener{
 		
 		Shader.setViewMatrix(gl, viewMatrix);
 		terrain.draw(gl, CoordFrame3D.identity());
+		afterInitFirstTime = true;
 		avatar.draw(gl, avatarFrame.rotateY(-90).scale(3, 3, 3));
+
 	}
 
 	@Override
@@ -141,6 +142,7 @@ public class World extends Application3D implements KeyListener{
 			break;
 		}
 
+//		terrain.keyPressed(e);
 		if(code == KeyEvent.VK_SPACE) {
 			if(viewAvatar) {
 				viewAvatar = false;
@@ -149,6 +151,7 @@ public class World extends Application3D implements KeyListener{
 			}		
 		}
 	}
+	
 }
 
 	
