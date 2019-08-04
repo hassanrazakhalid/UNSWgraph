@@ -257,8 +257,7 @@ public class Terrain extends BaseWorld {
 //		gl.glClearColor(getBackground().getRed()/255f, getBackground().getGreen()/255f,
 //                getBackground().getBlue()/255f, getBackground().getAlpha()/255f);
 		
-		gl.glClearColor(0, 1,0, 1);
-
+		gl.glClearColor(sunRotation/255.0f, sunRotation/255.0f,sunRotation/255.0f, 1);
         // Clear the screen with the defined clear color
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		
