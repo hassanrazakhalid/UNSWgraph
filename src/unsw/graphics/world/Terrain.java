@@ -42,7 +42,7 @@ public class Terrain extends BaseWorld {
     TriangleMesh fan;
     
     private float ambientIntensity;
-//    private Point3D lightPos;
+//   private Point3D lightPos;
     private float lightIntensity;
     
     // Properties of the material
@@ -364,8 +364,8 @@ public class Terrain extends BaseWorld {
 				    	  	Point3D r2 = p3;
 				    	   	Point3D r3 = p4;
 				    	   	
-				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
-				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/(r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ());
+				    	   	float L1 = ((r2.getZ()-r3.getZ())*(x-r3.getX())+(r3.getX()-r2.getX())*(z-r3.getZ()))/((r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
+				    	   	float L2 = ((r3.getZ()-r1.getZ())*(x-r3.getX())+(r1.getX()-r3.getX())*(z-r3.getZ()))/((r2.getZ()-r3.getZ())*(r1.getX()-r3.getX())+(r3.getX()-r2.getX())*(r1.getZ()-r3.getZ()));
 				    	   	float L3 = 1 - L1 - L2;
 				    	   	
 				    	   	a = L1*r1.getY() + L2*r2.getY() + L3*r3.getY();
