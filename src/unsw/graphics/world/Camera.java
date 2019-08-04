@@ -10,7 +10,7 @@ public class Camera {
 	private Terrain terrain;
 	private Point3D globalPosition;
 	private float globalRotation;
-	private float speed = 0.2f; 
+	private float speed = 0.05f; 
 
 	private boolean viewAvatar; 
 
@@ -35,7 +35,7 @@ public class Camera {
 	public void up(Terrain terrain) {
 //		System.out.println(globalPosition.toString());
 		globalPosition = this.globalPosition.translate(-speed*(float)Math.sin(Math.toRadians(globalRotation)), 0f, -speed*(float)Math.cos(Math.toRadians(globalRotation)));
-		globalPosition = this.globalPosition.translate(-0.4f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, -0.4f*(float)Math.cos(Math.toRadians(globalRotation)));
+		globalPosition = this.globalPosition.translate(-0.05f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, -0.05f*(float)Math.cos(Math.toRadians(globalRotation)));
 		setGlobalPosition(globalPosition.getX(), globalPosition.getZ());
 		
 		System.out.println("Moved to this altitude: " + terrain.altitude(globalPosition.getX(), globalPosition.getZ()));
@@ -45,7 +45,7 @@ public class Camera {
 
 //		System.out.println(globalPosition.toString());
 		globalPosition = this.globalPosition.translate(speed*(float)Math.sin(Math.toRadians(globalRotation)), 0f, speed*(float)Math.cos(Math.toRadians(globalRotation)));
-		globalPosition = this.globalPosition.translate(0.4f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, 0.4f*(float)Math.cos(Math.toRadians(globalRotation)));
+		globalPosition = this.globalPosition.translate(0.05f*(float)Math.sin(Math.toRadians(globalRotation)), 0f, 0.05f*(float)Math.cos(Math.toRadians(globalRotation)));
 		setGlobalPosition(globalPosition.getX(), globalPosition.getZ());
 	}
 	
@@ -54,9 +54,6 @@ public class Camera {
 		.translate(globalPosition)
 		.rotateX(globalRotation)
 		.rotateZ(globalRotation);
-		
-		
-		
 		coord.draw(gl);
 	}
 	
@@ -66,6 +63,15 @@ public class Camera {
 
 	public void right() {
 		globalRotation -= 10;
+	}
+	
+	public void jump() {
+		for (int i = 0; i < 10; i++) {
+			globalPosition = this.globalPosition.translate(0, i*0.1f, 0);
+		}
+		for (int i = 0; i < 10; i++) {
+			globalPosition = this.globalPosition.translate(0, -i*0.1f, 0);
+		}
 	}
 	
 	public void viewAvatar() {

@@ -112,7 +112,6 @@ public class World extends Application3D implements KeyListener{
         Shader.setProjMatrix(gl, Matrix4.perspective(60, width/(float)height, 1, 100));
 	}
 
-
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -135,12 +134,7 @@ public class World extends Application3D implements KeyListener{
 			camera.right();
 			break;
 		case KeyEvent.VK_J:
-			for (int i = 0; i < 10; i++) {
-				avatarFrame = avatarFrame.translate(0, 0.1f, 0);
-			}
-			for (int i = 0; i < 10; i++) {
-				avatarFrame = avatarFrame.translate(0, -0.1f, 0);
-			}
+			camera.jump();
 		case KeyEvent.VK_N:
 			terrain.nightMode();
 			break;
