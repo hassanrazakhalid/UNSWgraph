@@ -53,6 +53,15 @@ in vec3 FragPos;
 
 uniform sampler2D tex;
 
+//fog code
+in float visibility;
+uniform vec3 skyColor;
+uniform int isFogEnabled;
+
+void setFogColor() {
+	outputColor = mix(vec4(skyColor, 1.0), outputColor, visibility);
+}
+
 void main()
 {
 //    vec3 m_unit = normalize(m);
@@ -87,7 +96,6 @@ void main()
 	float diff = max(dot(m_unit, lightDir_unit), 0.0);
 	vec3 diffuse = diff * lightColor * diffuseCoeff;
 	
-	
 	if(isDay == 1) {
 		//calculating specular light for spotlight
 //		vec3 viewDir = normalize(light.position - viewPosition.xyz);
@@ -96,7 +104,10 @@ void main()
 //		vec3 specular = light.specularStrength * spec * lightColor;  
 		vec3 intensity = ambient+ diffuse;
 		vec4 result = vec4(intensity, 1) * texture(tex, texCoordFrag) * input_color; 
-		outputColor = result;//texture(tex, texCoordFrag);
+		outputColor = result;//texture(tex, texCoordFrag);		
+		if(isFogEnabled == 1) {
+			setFogColor();
+		}
 	}
 	else {
 				//light is camera position
@@ -141,7 +152,11 @@ void main()
 ////	        vec3 result = ambient + diffuse + specular;
 ////	        vec4 FragColor = vec4(result, 1.0);
 	        vec4 result = vec4(intensity, 1) * texture(tex, texCoordFrag);
+	        
 			outputColor = result;
+			if(isFogEnabled == 1) {
+				setFogColor();
+			}
 		}
 		else {
 			vec3 intensity = ambient;
@@ -149,6 +164,9 @@ void main()
 			vec4 result = vec4(intensity, 1) * texture(tex, texCoordFrag);
 //			outputColor = vec4(0,0,0,1); //result;
 			outputColor = result;
+			if(isFogEnabled == 1) {
+				setFogColor();
+			}
 		}
 	}	
 //	outputColor = input_color * texture(tex, texCoordFrag);

@@ -23,7 +23,13 @@ out vec3 m;
 out vec2 texCoordFrag;
 out vec4 globalPosition;
 out vec3 FragPos;
+out float visibility;
 //out float diffuseCoeff;
+
+//const float density = 0.007;
+const float density = 0.1;
+const float gradient = 1.5;
+
 
 void main() {
 	// The global position is in homogenous coordinates
@@ -37,4 +43,11 @@ void main() {
     // Compute the normal in view coordinates
     m = normalize(view_matrix*model_matrix * vec4(normal, 0)).xyz;    
     texCoordFrag = texCoord;
+    
+    //fog code
+    
+    float distance = length(viewPosition.xyz);
+    visibility = exp(-pow((distance*density), gradient));
+	visibility = clamp(visibility, 0.0, 1.0);
+//	visibility = 0.2;
 }
