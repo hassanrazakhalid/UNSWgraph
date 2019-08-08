@@ -135,6 +135,7 @@ public class World extends Application3D implements KeyListener{
 			break;
 		case KeyEvent.VK_J:
 			camera.jump();
+			break;
 		case KeyEvent.VK_N:
 			terrain.nightMode();
 			break;
@@ -154,7 +155,7 @@ public class World extends Application3D implements KeyListener{
 			}		
 		}
 	}
-	
+
 }
 
 	

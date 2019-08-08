@@ -1,6 +1,5 @@
 package unsw.graphics.world;
 
-import java.awt.Color;
 import java.io.IOException;
 
 import com.jogamp.opengl.GL;
@@ -8,7 +7,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
 
 import unsw.graphics.CoordFrame3D;
-import unsw.graphics.Shader;
 import unsw.graphics.Texture;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleMesh;
@@ -64,21 +62,8 @@ public class Avatar {
 		return isShowing;
 	}
 	
-	public void jump(CoordFrame3D frame) {
-		for(int i=0; i < 10; i++) {
-			
-		}
-	}
-	
-//	public void changeView() {
-//		if (isShowing) {
-////			position = camera.getGlobalPosition();
-//			isShowing = false;
-//		}else {
-////			position = camera.getGlobalPosition().translate(0, 0, 1);
-//			isShowing = true;
-//		}
-//	}
+
 	
 	
+
 }
