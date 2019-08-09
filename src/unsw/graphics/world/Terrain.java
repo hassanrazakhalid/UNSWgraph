@@ -255,14 +255,14 @@ public class Terrain extends BaseWorld {
 		Shader.setInt(gl, "isFogEnabled", fogEnabled);
 		Shader.setPoint3D(gl, "skyColor", skyColor);
 		// To Enable disable fog
-		if (fogEnabled == 1) {
-
-			gl.glClearColor(skyColor.getX(), skyColor.getY(), skyColor.getZ(), 1);
-			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-		} else {
-			gl.glClearColor(1, 1, 1, 1);
-			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-		}
+//		if (fogEnabled == 1) {
+//
+//			gl.glClearColor(skyColor.getX(), skyColor.getY(), skyColor.getZ(), 1);
+//			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+//		} else {
+//			gl.glClearColor(1, 1, 1, 1);
+//			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+//		}
 		
 		if (dayNightMode == 1) {
 			Vector4 sunVec = Matrix4.rotationX(sunRotation++).multiply(getSunlight().asPoint3D().asHomogenous());
@@ -484,6 +484,10 @@ public class Terrain extends BaseWorld {
 		default:
 			break;
 		}
+		
+//		for (Road road : roads) {
+//			road.keyPressed(e);
+//		}
 	}
 
 	/**

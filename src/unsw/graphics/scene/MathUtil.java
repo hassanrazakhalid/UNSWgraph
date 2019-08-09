@@ -44,6 +44,12 @@ public class MathUtil {
     	
     }
     
+    public static float distance(Point2D pt1, Point2D pt2) {
+    	float x_val = (float) Math.pow(pt2.getX() - pt1.getX(), 2);
+    	float y_val = (float) Math.pow(pt2.getY() - pt1.getY(), 2);
+    	return (float)Math.sqrt(x_val + y_val);
+    }
+    
     public static Vector3 crossProduct(Vector3 a, Vector3 b) {
     	
     	float val1 = a.getY() * b.getZ() - a.getZ() * b.getY();

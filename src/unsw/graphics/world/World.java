@@ -92,7 +92,7 @@ public class World extends Application3D implements KeyListener{
 		shader = new Shader(gl, "shaders/vertex_phong_world.glsl",
                 "shaders/fragment_phong_world.glsl");
         shader.use(gl);
-        
+//        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL3.GL_LINE);
         gl.glPointSize(10);
         
         // Turn on the depth buffer

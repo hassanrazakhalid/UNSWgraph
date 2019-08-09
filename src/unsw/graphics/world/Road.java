@@ -47,12 +47,13 @@ public class Road extends BaseWorld {
 	private String textureFileName = "res/textures/black-road-texture.png";
 	private String textureExt = "png";
 	Point2DBuffer quadTexCoords;
-	float global_y = 1.01f;//1.5f;
+	float global_y = -1f;//1.5f;
+//	float global_y = 1.5f;
 
 	public Road(float width, List<Point2D> spine) {
 		this.width = width;
 		this.points = spine;
-		segments = 15;
+		segments = 50;
 	}
 
 	/**
@@ -93,7 +94,6 @@ public class Road extends BaseWorld {
 	public Point2D point(float t) {
 		int i = (int) Math.floor(t);
 		t = t - i;
-
 		i *= 3;
 
 		Point2D p0 = points.get(i++);
@@ -191,19 +191,34 @@ public class Road extends BaseWorld {
 	}
 	
 	private List<Point3D> processPointOnCourse(float t) {
-		Point2D tangent_pt1 = getNormal(t);
 		Point2D pt = point(t);
-		System.out.println(pt.toString());
+//		System.out.println(pt.toString());
+		Point2D tangent_pt1 = getNormal(t);
+//		System.out.println(pt.toString());
 
-		Point2D normal_line_pt = tangent_pt1.translate(pt.getX(), pt.getY()).mulScaler((float) width() / 2);
-		pt = tangent_pt1.mulScaler(-1).translate(pt.getX(), pt.getY()).mulScaler((float) width() / 2);
+		Point2D normal_line_pt = tangent_pt1.mulScaler((float) width() / 2).translate(pt.getX(), pt.getY());
+		pt = tangent_pt1.mulScaler(-1).mulScaler((float) width() / 2).translate(pt.getX(), pt.getY());
+		
+//		Point2D normal_line_pt = tangent_pt1.translate(pt.getX() , pt.getY());
+//		pt = tangent_pt1.mulScaler(-1).translate(pt.getX(), pt.getY());
 
-		float y = 1.01f;
-		if(!SharedData.instance.fileName.contains("test1")) {
+//		float distance = MathUtil.distance(pt, normal_line_pt);
+//		System.out.println(distance);
+		
+//		normal_line_pt = new Point2D(normal_line_pt.getX(), normal_line_pt.getY() * (float) width() / 2);
+//		pt = new Point2D(pt.getX(), pt.getY()* (float) width() / 2);
+		
+//		System.out.println(MathUtil.distance(pt, normal_line_pt));
+		float y = 0.01f;
+//		if(!SharedData.instance.fileName.contains("test1")) {
+		if(global_y == -1) {
 			y = terrain.altitude(normal_line_pt.getX(), normal_line_pt.getY());
 			y += 0.01;
+			global_y = y;
 		}
-		Point3D normal_3d = new Point3D(normal_line_pt.getX(), y, normal_line_pt.getY());
+		System.out.println("y = " + terrain.altitude(normal_line_pt.getX(), normal_line_pt.getY()));
+//		}
+		Point3D normal_3d = new Point3D(normal_line_pt.getX(), global_y, normal_line_pt.getY());
 		
 		List<Point3D> res = new ArrayList<>();
 		res.add(new Point3D(pt.getX(), y, pt.getY()));
@@ -221,15 +236,25 @@ public class Road extends BaseWorld {
 			texture = new Texture(gl, textureFileName, textureExt, false);
 			List<Point3D> pts = new ArrayList<>();
 			float dt = 1.0f / segments;
+			
 //			global_y = orign.asPoint3D().getY();//1.5f;
 //			global_y += 1.01f;
 			
-			
-//			System.out.println(getNormal(1));
-			for (int index = 0; index < segments; index++) {
-				float t = index * dt;
+//			float dt = 1.0f/segments;
+//	    	
+//	    	for(int i = 0; i <= segments; i++){        		
+//	    		float t = i*dt;
+//	    		curve.add(new Point2D(getX(t), getY(t)));
+//	    	}
+			System.out.println(size());
+			float t;
+			for (t = 0; t < size() - 0.001; t+=dt) {
+//			for (int index = 0; index <= segments; index++) {
 				
-				System.out.println(t);
+//				float final_t = t + dt;
+				
+//				System.out.println(final_t);
+//				if(fin)
 //				Point2D tangent_pt1 = getNormal(t);
 //				Point2D pt = point(t);
 //				System.out.println(pt.toString());
@@ -245,7 +270,7 @@ public class Road extends BaseWorld {
 //				pts.add(new Point3D(pt.getX(), y, pt.getY()));
 //				pts.add(normal_3d);
 			}
-			pts.addAll(processPointOnCourse(0.99f));
+//			pts.addAll(processPointOnCourse(1f));
 			System.out.println(pts.get(pts.size()-1));
 			System.out.println(pts.get(pts.size()-2));
 			
