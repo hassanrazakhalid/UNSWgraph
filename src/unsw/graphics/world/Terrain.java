@@ -381,20 +381,20 @@ public class Terrain extends BaseWorld {
 	 */
 	public float altitude(float x, float z) {
 		float a = 0;
-		// checking if point is integer hence on the grid
+																	// checking if point is integer hence on the grid
 		if (x == Math.round(x) && z == Math.round(z)) {
 			if (x < 0 || z < 0 || x > width - 1 || z > depth - 1) {
 				a = 0;
 			} else {
 				a = altitudes[(int) x][(int) z];
 			}
-			// if point not on grid, calculating the altitude
+																		// if point not on grid, calculating the altitude
 		} else {
-			// if point outside the terrain, altitude = 0
+																		// if point outside the terrain, altitude = 0
 			if (x < 0 || z < 0 || x > width - 1 || z > depth - 1) {
 				a = 0;
 			} else {
-				// finding inside which square on the grid the point is
+													// finding inside which square on the grid the point is
 				int x0 = (int) Math.floor(x);
 				int z0 = (int) Math.floor(z);
 				float px = x - x0;
@@ -429,11 +429,11 @@ public class Terrain extends BaseWorld {
 					Point3D r3 = p2;
 
 					float L1 = ((r2.getZ() - r3.getZ()) * (x - r3.getX()) + (r3.getX() - r2.getX()) * (z - r3.getZ()))
-							/ (r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
-							+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ());
+							/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+							+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
 					float L2 = ((r3.getZ() - r1.getZ()) * (x - r3.getX()) + (r1.getX() - r3.getX()) * (z - r3.getZ()))
-							/ (r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
-							+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ());
+							/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+							+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
 					float L3 = 1 - L1 - L2;
 
 					a = L1 * r1.getY() + L2 * r2.getY() + L3 * r3.getY();
