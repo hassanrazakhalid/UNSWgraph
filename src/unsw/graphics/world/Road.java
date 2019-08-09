@@ -193,6 +193,14 @@ public class Road extends BaseWorld {
 	private List<Point3D> processPointOnCourse(float t) {
 		Point2D pt = point(t);
 //		System.out.println(pt.toString());
+		float y = 0.01f;
+//		if(!SharedData.instance.fileName.contains("test1")) {
+		if(global_y == -1) {
+			System.out.println(controlPoint(0));
+			y = terrain.altitude(controlPoint(0).getX(), controlPoint(0).getY());
+			y += 0.01;
+			global_y = y;
+		}
 		Point2D tangent_pt1 = getNormal(t);
 //		System.out.println(pt.toString());
 
@@ -209,14 +217,8 @@ public class Road extends BaseWorld {
 //		pt = new Point2D(pt.getX(), pt.getY()* (float) width() / 2);
 		
 //		System.out.println(MathUtil.distance(pt, normal_line_pt));
-		float y = 0.01f;
-//		if(!SharedData.instance.fileName.contains("test1")) {
-		if(global_y == -1) {
-			y = terrain.altitude(normal_line_pt.getX(), normal_line_pt.getY());
-			y += 0.01;
-			global_y = y;
-		}
-		System.out.println("y = " + terrain.altitude(normal_line_pt.getX(), normal_line_pt.getY()));
+		
+		System.out.println("y = " + terrain.altitude(normal_line_pt.getX(), normal_line_pt.getY()) + " for pt =" + normal_line_pt.toString());
 //		}
 		Point3D normal_3d = new Point3D(normal_line_pt.getX(), global_y, normal_line_pt.getY());
 		
