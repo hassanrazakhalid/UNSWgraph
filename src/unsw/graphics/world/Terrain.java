@@ -408,7 +408,14 @@ public class Terrain extends BaseWorld {
 				Point3D p3 = convertToPoint3d(x0, z1);
 				Point3D p4 = convertToPoint3d(x1, z1);
 				// lower triangle of the square
-				if (px < pz) {
+				
+				if(px ==  0) {
+					double t = pz;
+					a = (float) (t*p1.getY() + (1-t)*p3.getY());
+				} else if (pz == 0) {
+					double t = px;
+					a = (float) (t*p1.getY() + (1-t)*p2.getY());
+				} else if (px < pz) {
 					Point3D r1 = p1;
 					Point3D r2 = p3;
 					Point3D r3 = p4;
@@ -446,8 +453,10 @@ public class Terrain extends BaseWorld {
 
 					a = (float) (t * r1.getY() + (1 - t) * r2.getY());
 				}
+					
+				}
+				
 			}
-		}
 		return a;
 	}
 
