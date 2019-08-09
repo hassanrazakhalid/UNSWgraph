@@ -24,6 +24,7 @@ struct Light {
 	vec3  position;
     vec3  direction;
     float cutOff;  
+    float outerCutOff;
   
     vec3 ambient;
     vec3 diffuse;
@@ -132,13 +133,19 @@ void main()
 ////	        vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoords).rgb;  
 ////	        
 ////	        // specular
-	        vec3 viewDir = normalize(viewPosition.xyz - FragPos);
+	        vec3 viewDir = lightDir;//normalize(viewPosition.xyz - FragPos);
 	        vec3 reflectDir = reflect(-lightDir, norm);
 	        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
 			vec3 specular = light.specularStrength * spec * lightColor;
 //	        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 //	        vec3 specular = light.specular * spec * texture(material.specular, TexCoords).rgb;  
-////	        
+			
+			float epsilon = (light.cutOff - light.outerCutOff);
+			float intensity_spot = smoothstep(light.cutOff, light.outerCutOff, theta);
+//		    float intensity_spot = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+		    diffuse  *= intensity_spot;
+		    specular *= intensity_spot;
+			
 ////	        // attenuation
 			if(isAtteuationON == 1) {
 		        float distance = length(viewPosition.xyz - light.position);
