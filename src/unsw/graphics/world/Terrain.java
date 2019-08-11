@@ -46,7 +46,7 @@ public class Terrain extends BaseWorld {
 	private float diffuseCoefficient;
 	private float specularCoefficient;
 	private float phongExponent;
-	private unsw.graphics.world.Camera camera;
+//	private unsw.graphics.world.Camera camera;
 	private int isDay = 1;
 	private int isAtteuationON = 0;
 	private int fogEnabled = 0;
@@ -136,9 +136,9 @@ public class Terrain extends BaseWorld {
 
 	}
 
-	public void setCamera(unsw.graphics.world.Camera camera) {
-		this.camera = camera;
-	}
+//	public void setCamera(unsw.graphics.world.Camera camera) {
+//		this.camera = camera;
+//	}
 
 	private void drawTrees(GL3 gl, CoordFrame3D frame) {
 		for (Tree tree : trees) {
