@@ -2,8 +2,6 @@ package unsw.graphics.world;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -88,7 +86,7 @@ public class Tree extends BaseWorld {
 	    			.translate(0, 1f, 0)
 	    			.scale(scaleFactor, scaleFactor, scaleFactor);
 
-	    	treeFrame.draw(gl);
+//	    	treeFrame.draw(gl);
 	    	triangleMesh.draw(gl, treeFrame);
     }
 

@@ -1,9 +1,7 @@
 package unsw.graphics.world;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.jogamp.newt.event.KeyEvent;
@@ -11,7 +9,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
 
-import unsw.graphics.CoordFrame2D;
 import unsw.graphics.CoordFrame3D;
 import unsw.graphics.Matrix4;
 import unsw.graphics.Point2DBuffer;
@@ -19,14 +16,10 @@ import unsw.graphics.Shader;
 import unsw.graphics.Texture;
 import unsw.graphics.Vector3;
 import unsw.graphics.Vector4;
-import unsw.graphics.geometry.Line2D;
-import unsw.graphics.geometry.Line3D;
-import unsw.graphics.geometry.LineStrip2D;
-import unsw.graphics.geometry.LineStrip3D;
 import unsw.graphics.geometry.Point2D;
 import unsw.graphics.geometry.Point3D;
 import unsw.graphics.geometry.TriangleMesh;
-import unsw.graphics.scene.MathUtil;
+
 
 /**
  * COMMENT: Comment HeightMap
@@ -498,7 +491,7 @@ public class Terrain extends BaseWorld {
 		default:
 			break;
 		}
-		System.out.println("Light Dir = " + outerAngle);
+//		System.out.println("Light Dir = " + outerAngle);
 //		for (Road road : roads) {
 //			road.keyPressed(e);
 //		}
