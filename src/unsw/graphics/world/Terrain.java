@@ -63,6 +63,7 @@ public class Terrain extends BaseWorld {
 	private float outerAngle = 8.5f;
 	private boolean afterInitFirstTime = false;
 	float sunRotation = 0;
+	float lightDir = -1f;
 
 	// Texture vars
 	Texture texture;
@@ -205,11 +206,12 @@ public class Terrain extends BaseWorld {
 		Shader.setFloat(gl, "light.cutOff", (float) Math.cos(Math.toRadians(cutOffAngle)));
 		Shader.setFloat(gl, "light.outerCutOff", (float) Math.cos(Math.toRadians(outerAngle)));
 		
+		
 		// Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		Shader.setPoint3D(gl, "light.position", new Point3D(0, 0, 0f));
 		// Shader.setPoint3D(gl, "viewPos", camera.getGlobalPosition());
 
-		Shader.setPoint3D(gl, "light.direction", new Point3D(0, 0, -1.0f));
+		Shader.setPoint3D(gl, "light.direction", new Point3D(0, -0.5f, -1));
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
 		Shader.setFloat(gl, "light.specularStrength", specularCoefficient);
 
@@ -271,7 +273,6 @@ public class Terrain extends BaseWorld {
 //			gl.glClearColor(1, 1, 1, 1);
 //			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 //		}
-		
 		if (dayNightMode == 1) {
 			Vector4 sunVec = Matrix4.rotationX(sunRotation++).multiply(getSunlight().asPoint3D().asHomogenous());
 
@@ -481,10 +482,12 @@ public class Terrain extends BaseWorld {
 		case KeyEvent.VK_2:// To show that attenuation works
 //			cutOffAngle += 1;
 			outerAngle += 1;
+//			lightDir +=0.5f;
 			break;
 		case KeyEvent.VK_3:
 //			cutOffAngle -= 1;
 			outerAngle -= 1;
+//			lightDir -=0.5f;
 			break;
 		case KeyEvent.VK_F:
 			fogEnabled = fogEnabled == 0 ? 1 : 0;
@@ -495,7 +498,7 @@ public class Terrain extends BaseWorld {
 		default:
 			break;
 		}
-//		System.out.println("Outer angle = " + outerAngle);
+		System.out.println("Light Dir = " + outerAngle);
 //		for (Road road : roads) {
 //			road.keyPressed(e);
 //		}
