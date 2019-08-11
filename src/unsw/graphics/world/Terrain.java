@@ -250,6 +250,10 @@ public class Terrain extends BaseWorld {
 		// quadTexCoords.capacity * 2 * Float.BYTES,
 		// quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
 		// gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
+		if(isDay == 1)
+			dayMode();
+		else
+			nightMode();
 	}
 
 	public void draw(GL3 gl, CoordFrame3D frame) {
@@ -496,7 +500,7 @@ public class Terrain extends BaseWorld {
 		default:
 			break;
 		}
-		System.out.println("Outer angle = " + outerAngle);
+//		System.out.println("Outer angle = " + outerAngle);
 //		for (Road road : roads) {
 //			road.keyPressed(e);
 //		}

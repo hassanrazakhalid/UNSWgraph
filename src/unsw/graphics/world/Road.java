@@ -53,7 +53,7 @@ public class Road extends BaseWorld {
 	public Road(float width, List<Point2D> spine) {
 		this.width = width;
 		this.points = spine;
-		segments = 50;
+		segments = 20;
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class Road extends BaseWorld {
 //		if(!SharedData.instance.fileName.contains("test1")) {
 		if(global_y == -1) {
 			System.out.println(controlPoint(0));
-			y = terrain.altitude(controlPoint(0).getX(), controlPoint(0).getY());
+			y = terrain.altitude(controlPoint(0).getY(), controlPoint(0).getX());
 			y += 0.01;
 			global_y = y;
 		}
@@ -223,7 +223,7 @@ public class Road extends BaseWorld {
 		Point3D normal_3d = new Point3D(normal_line_pt.getX(), global_y, normal_line_pt.getY());
 		
 		List<Point3D> res = new ArrayList<>();
-		res.add(new Point3D(pt.getX(), y, pt.getY()));
+		res.add(new Point3D(pt.getX(), global_y, pt.getY()));
 		res.add(normal_3d);
 		return res;
 	}
@@ -280,9 +280,24 @@ public class Road extends BaseWorld {
 			quadTexCoords = new Point2DBuffer(pts.size() * 6);
 			List<Integer> indces = new ArrayList<>();
 			for (int i = 0; i < pts.size() - 2; i += 2) {
+				//clockwise
 				indces.add(i + 1);
 				indces.add(i + 3);
 				indces.add(i);
+				
+				indces.add(i + 3);
+				indces.add(i + 2);
+				indces.add(i);
+				
+				//anitclockwise
+//				indces.add(i + 1);
+//				indces.add(i);
+//				indces.add(i + 3);
+//				
+//				
+//				indces.add(i + 3);
+//				indces.add(i);
+//				indces.add(i + 2);
 				
 				
 				quadTexCoords.put(textureIndex++, i, i);
@@ -295,9 +310,7 @@ public class Road extends BaseWorld {
 //				quadTexCoords.put(textureIndex++, i+1f, i);
 //				quadTexCoords.put(textureIndex++, i+1f, i+1f);
 
-				indces.add(i + 3);
-				indces.add(i + 2);
-				indces.add(i);
+				
 				
 			}
 			roadMesh = new TriangleMesh(pts, indces, true);
