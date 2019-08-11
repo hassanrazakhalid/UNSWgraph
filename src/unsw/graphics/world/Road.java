@@ -203,9 +203,10 @@ public class Road extends BaseWorld {
 		}
 		Point2D tangent_pt1 = getNormal(t);
 //		System.out.println(pt.toString());
-
-		Point2D normal_line_pt = tangent_pt1.mulScaler((float) width() / 2).translate(pt.getX(), pt.getY());
-		pt = tangent_pt1.mulScaler(-1).mulScaler((float) width() / 2).translate(pt.getX(), pt.getY());
+		float halfWidth = (float) width() / 2;
+		Point2D normal_line_pt = tangent_pt1.mulScaler(halfWidth).translate(pt.getX(), pt.getY());
+		pt = tangent_pt1.mulScaler(-1).mulScaler(halfWidth).translate(pt.getX(), pt.getY());
+//		pt = normal_line_pt.mulScaler(-1);
 		
 //		Point2D normal_line_pt = tangent_pt1.translate(pt.getX() , pt.getY());
 //		pt = tangent_pt1.mulScaler(-1).translate(pt.getX(), pt.getY());
@@ -320,6 +321,7 @@ public class Road extends BaseWorld {
 		gl.glActiveTexture(GL.GL_TEXTURE0);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
 		copyTextureData(gl);
+		Shader.setPenColor(gl, Color.white);
 		roadMesh.draw(gl, frame);
 	}
 	
