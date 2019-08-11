@@ -34,7 +34,6 @@ public class Tree extends BaseWorld {
     public Tree(float x, float y, float z) {
         position = new Point3D(x, y, z);
         try {
-//			triangleMesh = new TriangleMesh("res/models/tree.ply");
 			triangleMesh = new TriangleMesh("res/models/tree.ply", true, true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

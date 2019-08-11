@@ -36,7 +36,7 @@ public class World extends Application3D implements KeyListener{
         this.camera = new unsw.graphics.world.Camera(terrain);
         this.avatar = new Avatar(camera);
         viewAvatar = false;
-        this.terrain.setCamera(camera);
+//        this.terrain.setCamera(camera);
     }
    
     /**
@@ -62,7 +62,6 @@ public class World extends Application3D implements KeyListener{
 		}
 
 		//computing the frame for the view matrix and avatar
-	
 		cameraFrame = CoordFrame3D.identity().rotateY(-camera.getGlobalRotation()).translate(new Point3D(0, 0, 0).minus(camera.getGlobalPosition()).asPoint3D());
 		avatarFrame = CoordFrame3D.identity().translate(camera.getGlobalPosition()).translate(0, -1f, 0).rotateY(camera.getGlobalRotation());
 		
