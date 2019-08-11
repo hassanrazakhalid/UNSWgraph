@@ -36,7 +36,8 @@ public class Tree extends BaseWorld {
     public Tree(float x, float y, float z) {
         position = new Point3D(x, y, z);
         try {
-			triangleMesh = new TriangleMesh("res/models/tree.ply");
+//			triangleMesh = new TriangleMesh("res/models/tree.ply");
+			triangleMesh = new TriangleMesh("res/models/tree.ply", true, true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,7 +55,7 @@ public class Tree extends BaseWorld {
     }
     
     private void initTexture(GL3 gl) {
-    	texture = new Texture(gl, textureFileName, textureExt, false);
+    		texture = new Texture(gl, textureFileName, textureExt, false);
 		int textureIndex = 0;
 		quadTexCoords = new Point2DBuffer(triangleMesh.verticesSize() * 6);
 		for (int i = 0; i < triangleMesh.verticesSize() - 2; i += 2) {
@@ -79,8 +80,8 @@ public class Tree extends BaseWorld {
     	if(texture == null) {
     		initTexture(gl);
     	}
-    	Shader.setPenColor(gl, Color.WHITE);
-    	gl.glActiveTexture(GL.GL_TEXTURE0);
+    		Shader.setPenColor(gl, Color.WHITE);
+    		gl.glActiveTexture(GL.GL_TEXTURE0);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getId());
 		copyTextureData(gl);
 	    	CoordFrame3D treeFrame = frame.translate(position)

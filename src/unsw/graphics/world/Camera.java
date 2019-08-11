@@ -24,7 +24,7 @@ public class Camera {
 	
 	//takes a position and finds the altitude of the terrain at that position
 	public void setGlobalPosition(float x, float z) {
-		globalPosition = new Point3D(x, 1.2f + terrain.altitude(x, z), z);
+		globalPosition = new Point3D(x, 1 + terrain.altitude(x, z), z);
 	}
 	public void setGlobalPositionJump(float x, float y, float z) {
 		globalPosition = new Point3D(x, y, z);
@@ -64,12 +64,12 @@ public class Camera {
 	
 	
 	public void jump() {
-		long startTime = java.lang.System.currentTimeMillis(); 						//time when jump button is pressed
-		long endTime = startTime + 500;												//0.5 sec after start of jump = end of jump
+		long startTime = java.lang.System.currentTimeMillis(); 			//time when jump button is pressed
+		long endTime = startTime + 500;									//0.5 sec after start of jump = end of jump
 		Point3D startPos = this.globalPosition;
 		while(System.currentTimeMillis() < endTime || System.currentTimeMillis() == endTime) {		//while jumping
 			double time = (System.currentTimeMillis() - startTime);
-			double jumpHeight = (8*time/1000 - 16*Math.pow(time/1000, 2));							//height follows a function
+			double jumpHeight = (8*time/1000 - 16*Math.pow(time/1000, 2));			//height follows a function
 			this.globalPosition = this.globalPosition.translate(0, (float) (startPos.getY() + jumpHeight - this.globalPosition.getY()), 0);
 			setGlobalPositionJump(startPos.getX(), (float) (startPos.getY() + jumpHeight), startPos.getZ());
 		}

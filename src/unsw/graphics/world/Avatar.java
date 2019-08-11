@@ -74,7 +74,7 @@ public class Avatar {
 		// TODO Auto-generated method stub
 		avatarTexture = new Texture(gl, "res/textures/BrightPurpleMarble.png", "png", false);
 		mesh.init(gl);
-		
+	
 		int textureIndex = 0;
 		
 		quadTexCoords = new Point2DBuffer(mesh.verticesSize() * 6);

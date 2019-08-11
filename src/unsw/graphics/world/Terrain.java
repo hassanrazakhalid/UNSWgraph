@@ -120,8 +120,7 @@ public class Terrain extends BaseWorld {
 
 		}
 
-		// adding the indicies of the vertices in the order the triangles in the mesh is
-		// drawn
+		// adding the indicies of the vertices in the order the triangles in the mesh is drawn
 		for (int z = 0; z < depth - 1; z++) {
 			for (int x = 0; x < width - 1; x++) {
 				Point3D p0 = convertToPoint3d(x, z);
@@ -140,10 +139,6 @@ public class Terrain extends BaseWorld {
 			}
 		}
 		fan = new TriangleMesh(vertices, indices, true);
-//		fan = new TriangleMesh(vertices, faceNormals, texCoords);
-//		fan = new TriangleMesh(vertices, faceNormals);
-//		fan = new TriangleMesh(vertices, indices, true, quadTexCoords);
-//		fan = new tr
 
 	}
 
