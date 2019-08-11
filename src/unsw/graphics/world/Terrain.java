@@ -60,6 +60,7 @@ public class Terrain extends BaseWorld {
 	private int dayNightMode = 0;
 
 	private float cutOffAngle = 12.5f;
+	private float outerAngle = 8.5f;
 	private boolean afterInitFirstTime = false;
 	float sunRotation = 0;
 
@@ -207,6 +208,8 @@ public class Terrain extends BaseWorld {
 		Shader.setInt(gl, "isDay", isDay);
 
 		Shader.setFloat(gl, "light.cutOff", (float) Math.cos(Math.toRadians(cutOffAngle)));
+		Shader.setFloat(gl, "light.outerCutOff", (float) Math.cos(Math.toRadians(outerAngle)));
+		
 		// Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		Shader.setPoint3D(gl, "light.position", new Point3D(0, 0, 0f));
 		// Shader.setPoint3D(gl, "viewPos", camera.getGlobalPosition());
@@ -256,7 +259,8 @@ public class Terrain extends BaseWorld {
 		Shader.setFloat(gl, "light.cutOff", (float) Math.cos(Math.toRadians(cutOffAngle)));
 
 		
-
+		Shader.setFloat(gl, "light.outerCutOff", (float) Math.cos(Math.toRadians(outerAngle)));
+		
 		Shader.setInt(gl, "isFogEnabled", fogEnabled);
 		Shader.setPoint3D(gl, "skyColor", skyColor);
 		// To Enable disable fog
@@ -476,10 +480,12 @@ public class Terrain extends BaseWorld {
 			isAtteuationON = isAtteuationON == 0 ? 1 : 0;
 			break;
 		case KeyEvent.VK_2:// To show that attenuation works
-			cutOffAngle += 1;
+//			cutOffAngle += 1;
+			outerAngle += 1;
 			break;
 		case KeyEvent.VK_3:
-			cutOffAngle -= 1;
+//			cutOffAngle -= 1;
+			outerAngle -= 1;
 			break;
 		case KeyEvent.VK_F:
 			fogEnabled = fogEnabled == 0 ? 1 : 0;
@@ -490,7 +496,7 @@ public class Terrain extends BaseWorld {
 		default:
 			break;
 		}
-		
+		System.out.println("Outer angle = " + outerAngle);
 //		for (Road road : roads) {
 //			road.keyPressed(e);
 //		}
