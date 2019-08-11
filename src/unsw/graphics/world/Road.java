@@ -197,7 +197,7 @@ public class Road extends BaseWorld {
 //		if(!SharedData.instance.fileName.contains("test1")) {
 		if(global_y == -1) {
 			System.out.println(controlPoint(0));
-			y = terrain.altitude(controlPoint(0).getY(), controlPoint(0).getX());
+			y = terrain.altitude(controlPoint(0).getX(), controlPoint(0).getY());
 			y += 0.01;
 			global_y = y;
 		}
