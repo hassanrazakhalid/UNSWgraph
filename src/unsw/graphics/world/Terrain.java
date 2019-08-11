@@ -211,7 +211,7 @@ public class Terrain extends BaseWorld {
 		Shader.setPoint3D(gl, "light.position", new Point3D(0, 0, 0f));
 		// Shader.setPoint3D(gl, "viewPos", camera.getGlobalPosition());
 
-		Shader.setPoint3D(gl, "light.direction", new Point3D(0, -0.5f, -1));
+		Shader.setPoint3D(gl, "light.direction", new Point3D(0, -0.2f, -1));
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
 		Shader.setFloat(gl, "light.specularStrength", specularCoefficient);
 
