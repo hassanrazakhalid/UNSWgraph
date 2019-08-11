@@ -85,7 +85,6 @@ public class Tree extends BaseWorld {
 	    			.translate(0, 1f, 0)
 	    			.scale(scaleFactor, scaleFactor, scaleFactor);
 
-//	    	treeFrame.draw(gl);
 	    	triangleMesh.draw(gl, treeFrame);
     }
 

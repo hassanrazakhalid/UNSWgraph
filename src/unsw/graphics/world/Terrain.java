@@ -46,7 +46,7 @@ public class Terrain extends BaseWorld {
 	private float diffuseCoefficient;
 	private float specularCoefficient;
 	private float phongExponent;
-//	private unsw.graphics.world.Camera camera;
+	
 	private int isDay = 1;
 	private int isAtteuationON = 0;
 	private int fogEnabled = 0;
@@ -65,7 +65,6 @@ public class Terrain extends BaseWorld {
 
 	private Point3D skyColor = new Point3D(0.5f, 0.5f, 0.5f);
 
-	// Point3DBuffer quadTexCoords;
 	Point2DBuffer quadTexCoords;
 	int segments;
 
@@ -98,11 +97,6 @@ public class Terrain extends BaseWorld {
 			for (int x = 0; x < width; x++) {
 				Point3D p = convertToPoint3d(x, z);
 				vertices.add(p);
-
-				// quadTexCoords.put(textureIndex++, x, z); // lower left
-				// quadTexCoords.put(textureIndex++, 0f, 1f);
-				// quadTexCoords.put(textureIndex++, 1f, 0f);
-				// quadTexCoords.put(textureIndex++, 1f, 1f);
 			}
 		}
 
@@ -136,9 +130,6 @@ public class Terrain extends BaseWorld {
 
 	}
 
-//	public void setCamera(unsw.graphics.world.Camera camera) {
-//		this.camera = camera;
-//	}
 
 	private void drawTrees(GL3 gl, CoordFrame3D frame) {
 		for (Tree tree : trees) {
@@ -153,8 +144,6 @@ public class Terrain extends BaseWorld {
 				road.initGL(gl);
 			}
 			road.draw(gl, frame);
-			// System.out.println();
-			// tangents.draw(gl);
 		}
 	}
 
@@ -176,14 +165,6 @@ public class Terrain extends BaseWorld {
 		}
 		Shader.setPoint3D(gl, "sunVec", getSunlight().asPoint3D());
 
-		// CoordFrame3D sunFrame = CoordFrame3D.identity()
-		// .translate(getSunlight().asPoint3D())
-		// .rotateX(sunRotation++);
-		//
-		// sunRotation = sunRotation % 360;
-		//
-		// Shader.setPoint3D(gl, "sunVec", sunFrame.);
-
 		ambientIntensity = 0.1f;
 		lightIntensity = 1f;
 		ambientCoefficient = 0.4f;
@@ -199,10 +180,7 @@ public class Terrain extends BaseWorld {
 		Shader.setFloat(gl, "light.cutOff", (float) Math.cos(Math.toRadians(cutOffAngle)));
 		Shader.setFloat(gl, "light.outerCutOff", (float) Math.cos(Math.toRadians(outerAngle)));
 		
-		
-		// Shader.setPoint3D(gl, "light.position", camera.getGlobalPosition());
 		Shader.setPoint3D(gl, "light.position", new Point3D(0, 0, 0f));
-		// Shader.setPoint3D(gl, "viewPos", camera.getGlobalPosition());
 
 		Shader.setPoint3D(gl, "light.direction", new Point3D(0, -0.2f, -1));
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
@@ -226,20 +204,8 @@ public class Terrain extends BaseWorld {
 		Shader.setFloat(gl, "light.linear", 0.09f);
 		Shader.setFloat(gl, "light.quadratic", 0.032f);
 
-		// Shader.setPoint3D(gl, "diffuseCoeff", new Point3D(diffuseCoefficient,
-		// diffuseCoefficient, diffuseCoefficient));
-		// Shader.setPoint3D(gl, "specularCoeff",
-		// new Point3D(specularCoefficient, specularCoefficient, specularCoefficient));
 		Shader.setFloat(gl, "phongExp", phongExponent);
 
-		// int[] names = new int[1];
-		// // Copy across the buffer for the texture coordinates
-		// gl.glGenBuffers(1, names, 0);
-		// gl.glBindBuffer(GL.GL_ARRAY_BUFFER, names[0]);
-		// gl.glBufferData(GL.GL_ARRAY_BUFFER,
-		// quadTexCoords.capacity * 2 * Float.BYTES,
-		// quadTexCoords.getBuffer(), GL.GL_STATIC_DRAW);
-		// gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 		if(isDay == 1)
 			dayMode();
 		else
@@ -257,15 +223,7 @@ public class Terrain extends BaseWorld {
 		
 		Shader.setInt(gl, "isFogEnabled", fogEnabled);
 		Shader.setPoint3D(gl, "skyColor", skyColor);
-		// To Enable disable fog
-//		if (fogEnabled == 1) {
-//
-//			gl.glClearColor(skyColor.getX(), skyColor.getY(), skyColor.getZ(), 1);
-//			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-//		} else {
-//			gl.glClearColor(1, 1, 1, 1);
-//			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-//		}
+
 		if (dayNightMode == 1) {
 			Vector4 sunVec = Matrix4.rotationX(sunRotation++).multiply(getSunlight().asPoint3D().asHomogenous());
 
@@ -289,11 +247,10 @@ public class Terrain extends BaseWorld {
 		Shader.setPenColor(gl, Color.white);
 		copyTextureData(gl);
 		fan.draw(gl, frame);
-		// Drawing trees
-		drawTrees(gl, frame);
-		// gl.glDisable(GL2.GL_TEXTURE_2D);
-		// Drawing roads
-		drawRoads(gl, frame);
+		
+		drawTrees(gl, frame);		// Drawing trees
+		
+		drawRoads(gl, frame);		// Drawing roads
 		afterInitFirstTime = true;
 	}
 
@@ -306,10 +263,6 @@ public class Terrain extends BaseWorld {
 				GL.GL_STATIC_DRAW);
 		gl.glVertexAttribPointer(Shader.TEX_COORD, 2, GL.GL_FLOAT, false, 0, 0);
 	}
-
-	// private void updateDiffuseCoff(GL3 gl) {
-	// Shader.setFloat(gl, "diffuseCoeff", diffuseCoefficient);
-	// }
 
 	public void nightMode() {
 
@@ -456,16 +409,6 @@ public class Terrain extends BaseWorld {
 
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
-		// if(code == KeyEvent.VK_1) {//to turn ON/ OFF attenuation
-		// isAtteuationON = isAtteuationON == 0 ? 1 : 0;
-		// }
-		// //To show that attenuation works
-		// else if(code == KeyEvent.VK_2) {
-		// cutOffAngle += 1;
-		// }
-		// else if(code == KeyEvent.VK_3) {
-		// cutOffAngle -= 1;
-		// }
 		switch (code) {
 
 		// to turn ON/ OFF attenuation
@@ -473,14 +416,10 @@ public class Terrain extends BaseWorld {
 			isAtteuationON = isAtteuationON == 0 ? 1 : 0;
 			break;
 		case KeyEvent.VK_2:// To show that attenuation works
-//			cutOffAngle += 1;
 			outerAngle += 1;
-//			lightDir +=0.5f;
 			break;
 		case KeyEvent.VK_3:
-//			cutOffAngle -= 1;
 			outerAngle -= 1;
-//			lightDir -=0.5f;
 			break;
 		case KeyEvent.VK_F:
 			fogEnabled = fogEnabled == 0 ? 1 : 0;
@@ -491,10 +430,7 @@ public class Terrain extends BaseWorld {
 		default:
 			break;
 		}
-//		System.out.println("Light Dir = " + outerAngle);
-//		for (Road road : roads) {
-//			road.keyPressed(e);
-//		}
+
 	}
 
 	/**

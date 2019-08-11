@@ -36,7 +36,6 @@ public class World extends Application3D implements KeyListener{
         this.camera = new unsw.graphics.world.Camera(terrain);
         this.avatar = new Avatar(camera);
         viewAvatar = false;
-//        this.terrain.setCamera(camera);
     }
    
     /**
@@ -94,8 +93,6 @@ public class World extends Application3D implements KeyListener{
 		shader = new Shader(gl, "shaders/vertex_phong_world.glsl",
                 "shaders/fragment_phong_world.glsl");
         shader.use(gl);
-//        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL3.GL_LINE);
-//        gl.glPointSize(10);
         
         // Turn on the depth buffer
         gl.glEnable(GL.GL_DEPTH_TEST);
