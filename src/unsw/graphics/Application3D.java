@@ -80,6 +80,8 @@ public abstract class Application3D extends Application {
         
         // Cull back faces
         gl.glEnable(GL.GL_CULL_FACE);
+
+
     }
     
     @Override

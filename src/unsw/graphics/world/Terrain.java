@@ -1,6 +1,7 @@
 package unsw.graphics.world;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -138,6 +139,10 @@ public class Terrain extends BaseWorld {
 			}
 		}
 		fan = new TriangleMesh(vertices, indices, true);
+//		fan = new TriangleMesh(vertices, faceNormals, texCoords);
+//		fan = new TriangleMesh(vertices, faceNormals);
+//		fan = new TriangleMesh(vertices, indices, true, quadTexCoords);
+//		fan = new tr
 
 	}
 
@@ -381,81 +386,73 @@ public class Terrain extends BaseWorld {
 	 */
 	public float altitude(float x, float z) {
 		float a = 0;
-																	// checking if point is integer hence on the grid
-		if (x == Math.round(x) && z == Math.round(z)) {
-			if (x < 0 || z < 0 || x > width - 1 || z > depth - 1) {
-				a = 0;
-			} else {
-				a = altitudes[(int) x][(int) z];
-			}
-																		// if point not on grid, calculating the altitude
-		} else {
-																		// if point outside the terrain, altitude = 0
-			if (x < 0 || z < 0 || x > width - 1 || z > depth - 1) {
-				a = 0;
-			} else {
-													// finding inside which square on the grid the point is
-				int x0 = (int) Math.floor(x);
-				int z0 = (int) Math.floor(z);
-				float px = x - x0;
-				float pz = z - z0;
-
-				int x1 = (int) Math.ceil(x);
-				int z1 = (int) Math.ceil(z);
-
-				Point3D p1 = convertToPoint3d(x0, z0);
-				Point3D p2 = convertToPoint3d(x1, z0);
-				Point3D p3 = convertToPoint3d(x0, z1);
-				Point3D p4 = convertToPoint3d(x1, z1);
-				// lower triangle of the square
-				
-				if(px ==  0) {
-					double t = pz;
-					a = (float) (t*p1.getY() + (1-t)*p3.getY());
-				} else if (pz == 0) {
-					double t = px;
-					a = (float) (t*p1.getY() + (1-t)*p2.getY());
-				} else if (px < pz) {
-					Point3D r1 = p1;
-					Point3D r2 = p3;
-					Point3D r3 = p4;
-
-					float L1 = ((r2.getZ() - r3.getZ()) * (x - r3.getX()) + (r3.getX() - r2.getX()) * (z - r3.getZ()))
-							/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
-									+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
-					float L2 = ((r3.getZ() - r1.getZ()) * (x - r3.getX()) + (r1.getX() - r3.getX()) * (z - r3.getZ()))
-							/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
-									+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
-					float L3 = 1 - L1 - L2;
-
-					a = L1 * r1.getY() + L2 * r2.getY() + L3 * r3.getY();
-					// upper triangle of the square
-				} else if (px > pz) {
-					Point3D r1 = p1;
-					Point3D r2 = p4;
-					Point3D r3 = p2;
-
-					float L1 = ((r2.getZ() - r3.getZ()) * (x - r3.getX()) + (r3.getX() - r2.getX()) * (z - r3.getZ()))
-							/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
-							+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
-					float L2 = ((r3.getZ() - r1.getZ()) * (x - r3.getX()) + (r1.getX() - r3.getX()) * (z - r3.getZ()))
-							/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
-							+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
-					float L3 = 1 - L1 - L2;
-
-					a = L1 * r1.getY() + L2 * r2.getY() + L3 * r3.getY();
-					// on the diagonal splitting the two triangles
-				} else if (px == pz) {
-					Point3D r1 = p1;
-					Point3D r2 = p4;
-
-					double t = r2.getX() - x;
-
-					a = (float) (t * r1.getY() + (1 - t) * r2.getY());
-				}
+		if (x < 0 || z < 0 || x > width - 1 || z > depth - 1) {			// if point outside the terrain, altitude = 0
+			a = 0;
+		}else {
+			if (x == Math.round(x) && z == Math.round(z)) {				// if point is integer hence on the grid
+					a = altitudes[(int) x][(int) z];
+				} else {											// finding inside which square on the grid the point is
+					int x0 = (int) Math.floor(x);
+					int z0 = (int) Math.floor(z);
+					float px = x - x0;
+					float pz = z - z0;
+	
+					int x1 = (int) Math.ceil(x);
+					int z1 = (int) Math.ceil(z);
+	
+					Point3D p1 = convertToPoint3d(x0, z0);
+					Point3D p2 = convertToPoint3d(x1, z0);
+					Point3D p3 = convertToPoint3d(x0, z1);
+					Point3D p4 = convertToPoint3d(x1, z1);
+					// lower triangle of the square
 					
+					if(px ==  0) {
+						double t = pz;
+						a = (float) (t*p1.getY() + (1-t)*p3.getY());
+					} else if (pz == 0) {
+						double t = px;
+						a = (float) (t*p1.getY() + (1-t)*p2.getY());
+					} else if (px < pz) {
+						Point3D r1 = p1;
+						Point3D r2 = p3;
+						Point3D r3 = p4;
+	
+						float L1 = ((r2.getZ() - r3.getZ()) * (x - r3.getX()) + (r3.getX() - r2.getX()) * (z - r3.getZ()))
+								/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+										+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
+						float L2 = ((r3.getZ() - r1.getZ()) * (x - r3.getX()) + (r1.getX() - r3.getX()) * (z - r3.getZ()))
+								/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+										+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
+						float L3 = 1 - L1 - L2;
+	
+						a = L1 * r1.getY() + L2 * r2.getY() + L3 * r3.getY();
+						// upper triangle of the square
+					} else if (px > pz) {
+						Point3D r1 = p1;
+						Point3D r2 = p4;
+						Point3D r3 = p2;
+	
+						float L1 = ((r2.getZ() - r3.getZ()) * (x - r3.getX()) + (r3.getX() - r2.getX()) * (z - r3.getZ()))
+								/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+								+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
+						float L2 = ((r3.getZ() - r1.getZ()) * (x - r3.getX()) + (r1.getX() - r3.getX()) * (z - r3.getZ()))
+								/ ((r2.getZ() - r3.getZ()) * (r1.getX() - r3.getX())
+								+ (r3.getX() - r2.getX()) * (r1.getZ() - r3.getZ()));
+						float L3 = 1 - L1 - L2;
+	
+						a = L1 * r1.getY() + L2 * r2.getY() + L3 * r3.getY();
+						// on the diagonal splitting the two triangles
+					} else if (px == pz) {
+						Point3D r1 = p1;
+						Point3D r2 = p4;
+	
+						double t = r2.getX() - x;
+	
+						a = (float) (t * r1.getY() + (1 - t) * r2.getY());
+					}	else {
+						System.out.println("COULDN'T INTERPOLATE");
+					}	
 				}
-				
 			}
 		return a;
 	}
