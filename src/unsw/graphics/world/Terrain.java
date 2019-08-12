@@ -237,6 +237,15 @@ public class Terrain extends BaseWorld {
 		else {
 			Shader.setPoint3D(gl, "sunVec", getSunlight().asPoint3D());
 		}
+		
+//		if (fogEnabled == 1) {
+//
+//			gl.glClearColor(skyColor.getX(), skyColor.getY(), skyColor.getZ(), 1);
+//			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+//		} else {
+//			gl.glClearColor(1, 1, 1, 1);
+//			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+//		}
 
 		//For toggling DayNight mode
 		Shader.setFloat(gl, "light.ambientStrength", ambientCoefficient);
